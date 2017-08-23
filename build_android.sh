@@ -7,6 +7,9 @@ declare STL_TYPE=c++_static
 
 # ======================================================================================================================
 
+cd $( dirname "${BASH_SOURCE[0]}" )
+./run_djinni.sh
+
 rm -r build || true
 rm -r output/android || true
 

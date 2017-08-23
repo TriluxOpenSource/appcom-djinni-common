@@ -26,7 +26,9 @@ include_directories(
 
 
 file(GLOB jni_generated_src "${CMAKE_CURRENT_LIST_DIR}/../generated-src/jni/*.cpp")
+file(GLOB jni_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/jni/*.hpp")
 file(GLOB cpp_src "${CMAKE_CURRENT_LIST_DIR}/../src/cpp/*.cpp")
+file(GLOB cpp_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/cpp/*.hpp")
 file(GLOB cpp_headers "${CMAKE_CURRENT_LIST_DIR}/../src/cpp/*.hpp")
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -108,5 +110,5 @@ install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../src/android/eu"
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../src/java/eu"
         DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/java/")
 
-install(FILES ${cpp_headers}
+install(FILES ${jni_generated_headers} ${cpp_generated_headers} ${cpp_headers}
         DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/include/")
