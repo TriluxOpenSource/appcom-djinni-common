@@ -1,3 +1,0 @@
-[submodule "deps/djinni"]
-	path = deps/djinni
-	url = git@github.com:dropbox/djinni.git
