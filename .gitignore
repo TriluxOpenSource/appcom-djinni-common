@@ -7,6 +7,8 @@ generated-src/
 android/include/
 android/lib/
 
+output/
+
 # Created by https://www.gitignore.io/api/windows,linux,osx,c++,xcode,androidstudio,visualstudiocode
 
 ### AndroidStudio ###
