@@ -27,6 +27,8 @@ list(APPEND CMAKE_FIND_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 file(GLOB objc_generated_src "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objc/*.mm")
 file(GLOB objc_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objc/*.h")
 file(GLOB objcpp_generated_src "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objcpp/*.mm")
+file(GLOB objcpp_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objcpp/*.h")
+file(GLOB cpp_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/cpp/*.hpp")
 file(GLOB cpp_src "${CMAKE_CURRENT_LIST_DIR}/../src/*.cpp")
 file(GLOB cpp_headers "${CMAKE_CURRENT_LIST_DIR}/../src/*.hpp")
 
@@ -49,7 +51,6 @@ find_package(Boost 1.64.0 REQUIRED COMPONENTS log)
 # cURL - https://curl.haxx.se/libcurl/
 # ----------------------------------------------------------------------------------------------------------------------
 
-#find_library(curl NAMES curl PATHS "${CMAKE_CURRENT_LIST_DIR}/lib")
 find_library(curl NAMES curl PATHS "${CMAKE_CURRENT_LIST_DIR}/lib" NO_DEFAULT_PATH)
 if(${curl} STREQUAL "curl-NOTFOUND")
     message(FATAL_ERROR "Couldn't find the curl library. Please check the Readme for required dependencies.")
@@ -104,5 +105,5 @@ install(TARGETS ac-ms-common-sdk djinni-support
         LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/"
         ARCHIVE DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/")
 
-install(FILES ${objc_generated_headers} ${cpp_headers}
+install(FILES ${objc_generated_headers} ${cpp_headers} ${objcpp_generated_headers} ${cpp_generated_headers}
         DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/")
