@@ -39,12 +39,12 @@ function build_android {
 
 # ======================================================================================================================
 
-#build_android 21 arm64-v8a
+build_android 21 arm64-v8a
 build_android 19 armeabi
-#build_android 19 armeabi-v7a
-#build_android 19 mips
+build_android 19 armeabi-v7a
+build_android 19 mips
 #build_android 21 mips64
-#build_android 19 x86
-#build_android 21 x86_64
+build_android 19 x86
+build_android 21 x86_64
 
 mv android/output output/android
