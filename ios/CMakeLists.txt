@@ -25,12 +25,21 @@ include_directories(# djinni suppport lib
 list(APPEND CMAKE_FIND_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
 file(GLOB objc_generated_src "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objc/*.mm")
+file(GLOB objc_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objc/*.h")
 file(GLOB objcpp_generated_src "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objcpp/*.mm")
 file(GLOB cpp_src "${CMAKE_CURRENT_LIST_DIR}/../src/*.cpp")
+file(GLOB cpp_headers "${CMAKE_CURRENT_LIST_DIR}/../src/*.hpp")
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Boost - http://www.boost.org
 # ----------------------------------------------------------------------------------------------------------------------
+
+set(BOOST_INCLUDEDIR "${CMAKE_CURRENT_LIST_DIR}/include")
+set(BOOST_LIBRARYDIR "${CMAKE_CURRENT_LIST_DIR}/lib")
+set(BOOST_ROOT "${CMAKE_CURRENT_LIST_DIR}")
+
+message(STATUS "BOOST_INCLUDEDIR = ${BOOST_INCLUDEDIR}")
+message(STATUS "BOOST_LIBRARYDIR = ${BOOST_LIBRARYDIR}")
 
 set(Boost_USE_STATIC_LIBS ON)
 
@@ -41,8 +50,7 @@ find_package(Boost 1.64.0 REQUIRED COMPONENTS log)
 # ----------------------------------------------------------------------------------------------------------------------
 
 #find_library(curl NAMES curl PATHS "${CMAKE_CURRENT_LIST_DIR}/lib")
-find_library(curl NAMES "curl")
-
+find_library(curl NAMES curl PATHS "${CMAKE_CURRENT_LIST_DIR}/lib" NO_DEFAULT_PATH)
 if(${curl} STREQUAL "curl-NOTFOUND")
     message(FATAL_ERROR "Couldn't find the curl library. Please check the Readme for required dependencies.")
 else()
@@ -53,7 +61,7 @@ endif()
 # nlohmann/json - https://github.com/nlohmann/json
 # ----------------------------------------------------------------------------------------------------------------------
 
-find_file(NLOHMANN_JSON "nlohmann/json.hpp")
+find_file(NLOHMANN_JSON "nlohmann/json.hpp" HINTS "${CMAKE_CURRENT_LIST_DIR}/include")
 if(NOT NLOHMANN_JSON)
   message(FATAL_ERROR "nlohmann/json is required. Please check the Readme.md for required dependencies.")
 else()
@@ -85,18 +93,16 @@ add_library(ac_ms_common_sdk
             ${cpp_src}
             )
 
-set_target_properties(user_microservice_sdk PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+set_target_properties(ac_ms_common_sdk PROPERTIES COMPILE_FLAGS "-fobjc-arc")
 
 target_link_libraries(ac_ms_common_sdk
                       djinni_support
                       ${curl}
                       ${Boost_LIBRARIES})
 
-file(GLOB headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objc/*.h")
-
 install(TARGETS ac_ms_common_sdk djinni_support
-        LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/"
-        ARCHIVE DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/")
+        LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/ios/lib/"
+        ARCHIVE DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/ios/lib/")
 
-install(FILES ${headers}
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/")
+install(FILES ${objc_generated_headers} ${cpp_headers}
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/ios/include/")

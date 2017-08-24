@@ -7,6 +7,9 @@ generated-src/
 android/include/
 android/lib/
 
+ios/include/
+ios/lib/
+
 output/
 
 # Created by https://www.gitignore.io/api/windows,linux,osx,c++,xcode,androidstudio,visualstudiocode
