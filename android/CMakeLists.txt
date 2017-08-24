@@ -74,7 +74,7 @@ endif()
 # djinni support library
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_library(djinni_support
+add_library(djinni-support
             SHARED
             "${CMAKE_CURRENT_LIST_DIR}/../deps/djinni/support-lib/jni/djinni_main.cpp"
             "${CMAKE_CURRENT_LIST_DIR}/../deps/djinni/support-lib/jni/djinni_support.cpp")
@@ -83,7 +83,7 @@ add_library(djinni_support
 # appcom common microservice sdk
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_library(ac_ms_common_sdk
+add_library(ac-ms-common-sdk
             SHARED
             # generated code
             ${jni_generated_src}
@@ -91,24 +91,24 @@ add_library(ac_ms_common_sdk
             ${cpp_src}
             )
 
-target_link_libraries(ac_ms_common_sdk
-                      djinni_support
+target_link_libraries(ac-ms-common-sdk
+                      djinni-support
                       ${curl}
                       ${Boost_LIBRARIES})
 
-set_target_properties(ac_ms_common_sdk PROPERTIES COMPILE_FLAGS "-fPIC")
+set_target_properties(ac-ms-common-sdk PROPERTIES COMPILE_FLAGS "-fPIC")
 
-install(TARGETS ac_ms_common_sdk djinni_support
-        LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/lib/${CMAKE_ANDROID_ARCH_ABI}")
+install(TARGETS ac-ms-common-sdk djinni-support
+        LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/${CMAKE_ANDROID_ARCH_ABI}")
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../generated-src/java/eu"
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/java/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/java/")
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../src/android/eu"
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/java/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/java/")
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../src/java/eu"
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/java/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/java/")
 
 install(FILES ${jni_generated_headers} ${cpp_generated_headers} ${cpp_headers}
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/output/include/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/")

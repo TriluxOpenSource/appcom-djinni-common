@@ -8,10 +8,13 @@ declare STL_TYPE=c++_static
 # ======================================================================================================================
 
 cd $( dirname "${BASH_SOURCE[0]}" )
-./run_djinni.sh
 
+# cleanup possible previous build
 rm -r build || true
-rm -r output/android || true
+rm -r output || true
+
+# generate djinni code
+./run-djinni.sh
 
 # ======================================================================================================================
 
@@ -47,4 +50,16 @@ build_android 19 mips
 build_android 19 x86
 build_android 21 x86_64
 
-mv android/output output/android
+# ======================================================================================================================
+#
+# zip final result
+
+declare COMMIT=$(git rev-list --tags --max-count=1)
+declare VERSION=$(git describe --tags ${COMMIT})
+
+cd output
+
+zip -r ac-ms-common-sdk-android-${VERSION}.zip include lib java *.yml
+
+# cleanup
+rm -r include lib *.yml

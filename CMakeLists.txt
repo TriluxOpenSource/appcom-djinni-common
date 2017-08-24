@@ -66,23 +66,23 @@ endif()
 # djinni support library
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_library(djinni_support_objc
+add_library(djinni-support-objc
             STATIC
             deps/djinni/support-lib/objc/DJIError.mm
             deps/djinni/support-lib/objc/DJIProxyCaches.mm)
 
-add_library(djinni_support_jni
+add_library(djinni-support-jni
             STATIC
             deps/djinni/support-lib/jni/djinni_main.cpp
             deps/djinni/support-lib/jni/djinni_support.cpp)
 
-set_target_properties(djinni_support_objc PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+set_target_properties(djinni-support-objc PROPERTIES COMPILE_FLAGS "-fobjc-arc")
 
 # ----------------------------------------------------------------------------------------------------------------------
 # appcom common microservice sdk
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_library(ac_ms_common_sdk
+add_library(ac-ms-common-sdk
             STATIC
             # generated objective-c++ code
             ${objcpp_generated_src}
@@ -94,11 +94,11 @@ add_library(ac_ms_common_sdk
             ${cpp_src}
             )
 
-set_target_properties(ac_ms_common_sdk PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+set_target_properties(ac-ms-common-sdk PROPERTIES COMPILE_FLAGS "-fobjc-arc")
 
-target_link_libraries(ac_ms_common_sdk
-                      djinni_support_objc
-                      djinni_support_jni
+target_link_libraries(ac-ms-common-sdk
+                      djinni-support-objc
+                      djinni-support-jni
                       ${curl}
                       ${Boost_LIBRARIES})
 
@@ -128,9 +128,9 @@ if(Boost_UNIT_TEST_FRAMEWORK_FOUND)
 
         # link jwtpp, boost and crypto++  
         target_link_libraries(${testname}
-                              ac_ms_common_sdk
-                              djinni_support_objc
-                              djinni_support_jni
+                              ac-ms-common-sdk
+                              djinni-support-objc
+                              djinni-support-jni
                               ${curl}
                               ${Boost_LIBRARIES})
 

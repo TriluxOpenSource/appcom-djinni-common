@@ -72,18 +72,18 @@ endif()
 # djinni support library
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_library(djinni_support
+add_library(djinni-support
             STATIC
             ../deps/djinni/support-lib/objc/DJIError.mm
             ../deps/djinni/support-lib/objc/DJIProxyCaches.mm)
 
-set_target_properties(djinni_support PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+set_target_properties(djinni-support PROPERTIES COMPILE_FLAGS "-fobjc-arc")
 
 # ----------------------------------------------------------------------------------------------------------------------
 # appcom common microservice sdk
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_library(ac_ms_common_sdk
+add_library(ac-ms-common-sdk
             STATIC
             # generated objective-c++ code
             ${objc_generated_src}
@@ -93,16 +93,16 @@ add_library(ac_ms_common_sdk
             ${cpp_src}
             )
 
-set_target_properties(ac_ms_common_sdk PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+set_target_properties(ac-ms-common-sdk PROPERTIES COMPILE_FLAGS "-fobjc-arc")
 
-target_link_libraries(ac_ms_common_sdk
-                      djinni_support
+target_link_libraries(ac-ms-common-sdk
+                      djinni-support
                       ${curl}
                       ${Boost_LIBRARIES})
 
-install(TARGETS ac_ms_common_sdk djinni_support
-        LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/ios/lib/"
-        ARCHIVE DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/ios/lib/")
+install(TARGETS ac-ms-common-sdk djinni-support
+        LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/"
+        ARCHIVE DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/")
 
 install(FILES ${objc_generated_headers} ${cpp_headers}
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/ios/include/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/")

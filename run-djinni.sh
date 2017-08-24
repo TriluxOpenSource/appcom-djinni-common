@@ -9,9 +9,9 @@ declare java_out="$base_dir/generated-src/java/eu/appcom/microservices/sdk/commo
 declare java_package="eu.appcom.microservices.sdk.common"
 declare namespace="appcom"
 declare objc_prefix="AC"
-declare djinni_file="ac_ms_common_sdk.djinni"
+declare djinni_file="ac-ms-common-sdk.djinni"
 declare yaml_out="output"
-declare yaml_out_file="ac_ms_common_sdk.yml"
+declare yaml_out_file="ac-ms-common-sdk.yml"
 
 rm -r $base_dir/generated-src/*
 
