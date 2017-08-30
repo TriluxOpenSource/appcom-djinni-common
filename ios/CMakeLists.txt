@@ -19,18 +19,24 @@ include_directories(# djinni suppport lib
                     ../generated-src/objcpp
                     # other deps
                     ${CMAKE_CURRENT_SOURCE_DIR}/include
-                    # our source
-                    ../src)
+                    # implementation
+                    ../src/cpp
+                    ../src/objc)
 
 list(APPEND CMAKE_FIND_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
+# djinni generated code
 file(GLOB objc_generated_src "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objc/*.mm")
 file(GLOB objc_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objc/*.h")
 file(GLOB objcpp_generated_src "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objcpp/*.mm")
 file(GLOB objcpp_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/objcpp/*.h")
 file(GLOB cpp_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/cpp/*.hpp")
-file(GLOB cpp_src "${CMAKE_CURRENT_LIST_DIR}/../src/*.cpp")
-file(GLOB cpp_headers "${CMAKE_CURRENT_LIST_DIR}/../src/*.hpp")
+
+# implementation
+file(GLOB cpp_src "${CMAKE_CURRENT_LIST_DIR}/../src/cpp/*.cpp")
+file(GLOB cpp_headers "${CMAKE_CURRENT_LIST_DIR}/../src/cpp/*.hpp")
+file(GLOB objc_src "${CMAKE_CURRENT_LIST_DIR}/../src/objc/*.m")
+file(GLOB objc_headers "${CMAKE_CURRENT_LIST_DIR}/../src/objc/*.h")
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Boost - http://www.boost.org
@@ -59,17 +65,6 @@ else()
 endif()
 
 # ----------------------------------------------------------------------------------------------------------------------
-# nlohmann/json - https://github.com/nlohmann/json
-# ----------------------------------------------------------------------------------------------------------------------
-
-find_file(NLOHMANN_JSON "nlohmann/json.hpp" HINTS "${CMAKE_CURRENT_LIST_DIR}/include")
-if(NOT NLOHMANN_JSON)
-  message(FATAL_ERROR "nlohmann/json is required. Please check the Readme.md for required dependencies.")
-else()
-  message(STATUS "Found 'nlohmann/json' at: ${NLOHMANN_JSON}")
-endif()
-
-# ----------------------------------------------------------------------------------------------------------------------
 # djinni support library
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -92,6 +87,7 @@ add_library(ac-ms-common-sdk
             ${objcpp_generated_src}
             # implementation
             ${cpp_src}
+            ${objc_src}
             )
 
 set_target_properties(ac-ms-common-sdk PROPERTIES COMPILE_FLAGS "-fobjc-arc")
@@ -105,5 +101,10 @@ install(TARGETS ac-ms-common-sdk djinni-support
         LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/"
         ARCHIVE DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/")
 
-install(FILES ${objc_generated_headers} ${cpp_headers} ${objcpp_generated_headers} ${cpp_generated_headers}
+install(FILES 
+        ${objc_generated_headers} 
+        ${cpp_headers} 
+        ${objc_headers} 
+        ${objcpp_generated_headers} 
+        ${cpp_generated_headers}
         DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/")
