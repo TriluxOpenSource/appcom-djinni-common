@@ -40,7 +40,7 @@ typedef void (^ __nonnull ACThreadFuncBlock)();
 
 /** Creates and starts a new thread which will call the given function. */
 - (void)createThread:(nonnull NSString *)name
-                func:(nonnull ACThreadFunc *)func;
+                func:(nullable ACThreadFunc *)func;
 
 /** Creates and starts a new thread which will call the given block. */
 - (void)createThread:(nonnull NSString *)name

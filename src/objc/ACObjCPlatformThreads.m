@@ -68,7 +68,7 @@
 }
 
 - (void)createThread:(nonnull NSString *)name
-                func:(nonnull ACThreadFunc *)func {
+                func:(nullable ACThreadFunc *)func {
     NSThread * thread = [[NSThread alloc] initWithTarget:func selector:@selector(run) object:nil];
     thread.name = name;
     if (_cfgBlock) {
