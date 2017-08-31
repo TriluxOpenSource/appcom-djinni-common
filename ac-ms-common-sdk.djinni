@@ -18,6 +18,7 @@ HttpResponse = record {
 
 HttpListener = interface +c {
     receivedHttpResponse(response: HttpResponse);
+    errorOnSend(error: string);
 }
 
 HttpHandler = interface +j +o {
