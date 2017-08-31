@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 
-#include <platform_threads.hpp>
-#include <thread_func.hpp>
+#include <PlatformThreads.hpp>
+#include <ThreadFunc.hpp>
 
 #include <functional>
 #include <thread>
