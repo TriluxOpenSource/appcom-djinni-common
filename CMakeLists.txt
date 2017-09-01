@@ -27,7 +27,7 @@ file(GLOB cpp_src "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
 # Boost - http://www.boost.org
 # ----------------------------------------------------------------------------------------------------------------------
 
-find_package(Boost 1.64.0 REQUIRED COMPONENTS log)
+find_package(Boost 1.64.0 REQUIRED COMPONENTS log log_setup system thread filesystem)
 
 include_directories (${Boost_INCLUDE_DIRS})
 

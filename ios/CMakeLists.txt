@@ -51,7 +51,7 @@ message(STATUS "BOOST_LIBRARYDIR = ${BOOST_LIBRARYDIR}")
 
 set(Boost_USE_STATIC_LIBS ON)
 
-find_package(Boost 1.64.0 REQUIRED COMPONENTS log)
+find_package(Boost 1.64.0 REQUIRED COMPONENTS log log_setup system thread filesystem)
 
 # ----------------------------------------------------------------------------------------------------------------------
 # cURL - https://curl.haxx.se/libcurl/
