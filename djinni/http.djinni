@@ -1,0 +1,26 @@
+HttpRequest = record {
+    uri: string;
+
+    # Content-Type (f.e. application/json)
+    mediaType: string;
+    headers: map<string, string>;
+    # body as binary data
+    body: binary;
+    # GET / PUT / POST / DELETE
+    type: string;
+}
+
+HttpResponse = record {
+    headers: map<string, string>;
+    body: binary;
+    status: i16;
+}
+
+HttpListener = interface +c {
+    receivedHttpResponse(response: HttpResponse);
+    errorOnSend(error: string);
+}
+
+HttpHandler = interface +j +o {
+    sendHttpRequest(request: HttpRequest, delegate: HttpListener);
+}

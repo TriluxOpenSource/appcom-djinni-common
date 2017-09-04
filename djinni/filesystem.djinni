@@ -1,0 +1,11 @@
+# Specifies some common directories
+FilesystemDirectory = enum {
+    # the directory where an app stores documents
+    Documents;
+    # the directory where an app stores temporary data (may be erased by the operating system at any time)
+    Temp;
+}
+
+FilesystemHandler = interface +j +o {
+    getDirectory(directory: FilesystemDirectory): string;
+}
