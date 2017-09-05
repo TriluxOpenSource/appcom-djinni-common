@@ -14,7 +14,7 @@ declare PLATFORM=$1
 
 # add all native libraries to this array that needs to be installed
 declare NATIVE_LIBRARIES=(
-	"boost:${PLATFORM}:1.65.0:zip"
+	"boost:${PLATFORM}:1.64.0:zip"
 	"curl:${PLATFORM}:7.52.1:zip"
 	)
 

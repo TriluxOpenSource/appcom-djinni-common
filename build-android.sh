@@ -9,8 +9,11 @@ declare COMMIT=$(git rev-list --tags --max-count=1)
 declare VERSION=$(git describe --tags ${COMMIT})
 declare OUTPUT_FILE=ac-ms-common-sdk-android-${VERSION}.zip
 
-# set to TRUE to deploy to Nexus
-declare DEPLOY_TO_NEXUS=FALSE
+# set to TRUE to zip archive
+declare ZIP_RESULTS=TRUE
+
+# set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
+declare DEPLOY_TO_NEXUS=TRUE
 
 # ======================================================================================================================
 
@@ -61,18 +64,21 @@ build_android 21 x86_64
 #
 # zip final result
 
-cd output
+if [ "${ZIP_RESULTS}" = "TRUE" ]; then
 
-zip -r ${OUTPUT_FILE} include lib java *.yml
+    cd output
 
-# cleanup
-rm -r include lib java *.yml
+    zip -r ${OUTPUT_FILE} include lib java *.yml
+
+    # cleanup
+    rm -r include lib java *.yml
+fi
 
 # ======================================================================================================================
 #
 # upload to nexus
 
-if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ]; then
+if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ] && [ "${ZIP_RESULTS}" = "TRUE" ]; then
 
     # check if maven is installed
     command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven 2 is required but it's not installed. Aborting."; exit 1; }
