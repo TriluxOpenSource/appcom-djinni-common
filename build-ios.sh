@@ -10,7 +10,10 @@ declare COMMIT=$(git rev-list --tags --max-count=1)
 declare VERSION=$(git describe --tags ${COMMIT})
 declare OUTPUT_FILE=ac-ms-common-sdk-ios-${VERSION}.zip
 
-# set to TRUE to deploy to Nexus
+# set to TRUE to zip archive
+declare ZIP_RESULTS=FALSE
+
+# set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
 declare DEPLOY_TO_NEXUS=FALSE
 
 # ======================================================================================================================
@@ -43,18 +46,21 @@ rm -rf build
 #
 # zip final result
 
-cd output
+if [ "${ZIP_RESULTS}" = "TRUE" ]; then
 
-zip -r ${OUTPUT_FILE} include lib *.yml
+    cd output
 
-# cleanup
-rm -r include lib *.yml
+    zip -r ${OUTPUT_FILE} include lib *.yml
+
+    # cleanup
+    rm -r include lib *.yml
+fi
 
 # ======================================================================================================================
 #
 # upload to nexus
 
-if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ]; then
+if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ] && [ "${ZIP_RESULTS}" = "TRUE" ]; then
 
     # check if maven is installed
     command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven 2 is required but it's not installed. Aborting."; exit 1; }
