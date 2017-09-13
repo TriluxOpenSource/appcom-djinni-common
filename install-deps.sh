@@ -16,6 +16,7 @@ declare PLATFORM=$1
 declare NATIVE_LIBRARIES=(
 	"boost:${PLATFORM}:1.64.0:zip"
 	"curl:${PLATFORM}:7.52.1:zip"
+	"nlohmann-json:${PLATFORM}:2.1.1:zip"
 	)
 
 # ======================================================================================================================

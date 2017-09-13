@@ -24,11 +24,13 @@ include_directories(
                     # implementation
                     "${CMAKE_CURRENT_LIST_DIR}/../src")
 
-
+# djinni generated code
 file(GLOB jni_generated_src "${CMAKE_CURRENT_LIST_DIR}/../generated-src/jni/*.cpp")
 file(GLOB jni_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/jni/*.hpp")
-file(GLOB cpp_src "${CMAKE_CURRENT_LIST_DIR}/../src/cpp/*.cpp")
 file(GLOB cpp_generated_headers "${CMAKE_CURRENT_LIST_DIR}/../generated-src/cpp/*.hpp")
+
+# implementation
+file(GLOB cpp_src "${CMAKE_CURRENT_LIST_DIR}/../src/cpp/*.cpp")
 file(GLOB cpp_headers "${CMAKE_CURRENT_LIST_DIR}/../src/cpp/*.hpp")
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -63,7 +65,7 @@ endif()
 # nlohmann/json - https://github.com/nlohmann/json
 # ----------------------------------------------------------------------------------------------------------------------
 
-find_file(NLOHMANN_JSON "nlohmann/json.hpp" HINTS "${CMAKE_CURRENT_LIST_DIR}/include")
+find_file(NLOHMANN_JSON "nlohmann/json.hpp" PATHS "${CMAKE_CURRENT_LIST_DIR}/include" NO_DEFAULT_PATH)
 if(NOT NLOHMANN_JSON)
   message(FATAL_ERROR "nlohmann/json is required. Please check the Readme.md for required dependencies.")
 else()
@@ -102,13 +104,13 @@ install(TARGETS ac-ms-common-sdk djinni-support
         LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/${CMAKE_ANDROID_ARCH_ABI}")
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../generated-src/java/eu"
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/java/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/jni/")
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../src/android/eu"
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/java/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/jni/")
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../src/java/eu"
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/java/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/jni/")
 
 install(FILES ${jni_generated_headers} ${cpp_generated_headers} ${cpp_headers}
         DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/")

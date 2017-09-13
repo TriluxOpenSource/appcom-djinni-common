@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-declare NDK_PATH='/Users/gordon/Library/Android/sdk/ndk-bundle'
 declare TOOLCHAIN_VERSION=clang
 declare STL_TYPE=c++_static
 
@@ -13,15 +12,20 @@ declare OUTPUT_FILE=ac-ms-common-sdk-android-${VERSION}.zip
 declare ZIP_RESULTS=TRUE
 
 # set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
-declare DEPLOY_TO_NEXUS=TRUE
+declare DEPLOY_TO_NEXUS=FALSE
 
 # ======================================================================================================================
 
 cd $( dirname "${BASH_SOURCE[0]}" )
 
+# check that the android ndk path is set
+if [ -z "${ANDROID_NDK}" ]; then 
+    echo >&2 "ANDROID_NDK is not set - please set ANDROID_NDK to the path of your android ndk installation."; exit 1;
+fi
+
 # cleanup possible previous build
 rm -r build || true
-rm -r output || true
+rm -r output/* || true
 
 # generate djinni code
 ./run-djinni.sh
@@ -38,7 +42,7 @@ function build_android {
     cmake ../android \
     -DCMAKE_SYSTEM_NAME=Android \
     -DCMAKE_SYSTEM_VERSION=${1} \
-    -DCMAKE_ANDROID_NDK=${NDK_PATH} \
+    -DCMAKE_ANDROID_NDK=${ANDROID_NDK} \
     -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=${TOOLCHAIN_VERSION} \
     -DCMAKE_ANDROID_ARCH_ABI=${2} \
     -DCMAKE_ANDROID_STL_TYPE=${STL_TYPE}
@@ -68,10 +72,10 @@ if [ "${ZIP_RESULTS}" = "TRUE" ]; then
 
     cd output
 
-    zip -r ${OUTPUT_FILE} include lib java *.yml
+    zip -r ${OUTPUT_FILE} include lib jni *.yml
 
     # cleanup
-    rm -r include lib java *.yml
+    rm -r include lib jni *.yml
 fi
 
 # ======================================================================================================================
