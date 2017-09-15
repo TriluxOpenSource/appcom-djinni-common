@@ -97,7 +97,8 @@ target_link_libraries(ac-ms-common-sdk
                       djinni-support
                       ${curl}
                       ${Boost_LIBRARIES}
-                      android)
+                      android
+                      log)
 
 set_target_properties(ac-ms-common-sdk PROPERTIES COMPILE_FLAGS "-fPIC")
 

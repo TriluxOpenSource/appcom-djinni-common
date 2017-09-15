@@ -15,6 +15,8 @@
 // limitations under the License.
 //
 
+#pragma once
+
 #include <PlatformThreads.hpp>
 #include <ThreadFunc.hpp>
 

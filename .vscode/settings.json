@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "typeindex": "cpp",
+        "typeinfo": "cpp",
+        "memory": "cpp"
     }
 }
