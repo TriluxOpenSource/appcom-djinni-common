@@ -1,0 +1,14 @@
+# Specifies the different loglevels
+LogLevel = enum {
+    Trace;
+    Debug;
+    Info;
+    Warning;
+    Error;
+    Fatal;
+}
+
+Logger = interface +c {
+    # initialise the logger for the specified loglevel (needs to be called once for all libraries that use this)
+    static init(loglevel: LogLevel);
+}

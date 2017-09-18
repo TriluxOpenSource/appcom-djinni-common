@@ -1,3 +1,4 @@
 @import "djinni/filesystem.djinni"
 @import "djinni/http.djinni"
+@import "djinni/logger.djinni"
 @import "djinni/threads.djinni"
