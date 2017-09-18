@@ -68,12 +68,12 @@ endif()
 # djinni support library
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_library(djinni-support
-            STATIC
-            ../deps/djinni/support-lib/objc/DJIError.mm
-            ../deps/djinni/support-lib/objc/DJIProxyCaches.mm)
-
-set_target_properties(djinni-support PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+find_library(djinni NAMES djinni-support PATHS "${CMAKE_CURRENT_LIST_DIR}/lib" NO_DEFAULT_PATH)
+if(${djinni} STREQUAL "djinni-NOTFOUND")
+    message(FATAL_ERROR "Couldn't find the djinni library. Please check the Readme for required dependencies.")
+else()
+    message(STATUS "Found 'djinni' at: ${djinni}")
+endif()
 
 # ----------------------------------------------------------------------------------------------------------------------
 # appcom common microservice sdk
@@ -93,11 +93,11 @@ add_library(ac-ms-common-sdk
 set_target_properties(ac-ms-common-sdk PROPERTIES COMPILE_FLAGS "-fobjc-arc")
 
 target_link_libraries(ac-ms-common-sdk
-                      djinni-support
+                      ${djinni}
                       ${curl}
                       ${Boost_LIBRARIES})
 
-install(TARGETS ac-ms-common-sdk djinni-support
+install(TARGETS ac-ms-common-sdk
         LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/"
         ARCHIVE DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/")
 

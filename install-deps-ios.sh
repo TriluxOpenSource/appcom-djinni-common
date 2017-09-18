@@ -17,6 +17,7 @@ declare NATIVE_LIBRARIES=(
 	"boost:ios:1.64.0:zip"
 	"curl:ios:7.52.1:zip"
 	"nlohmann-json:ios:2.1.1:zip"
+	"dropbox-djinni:ios:428:zip"
 	)
 
 # ======================================================================================================================

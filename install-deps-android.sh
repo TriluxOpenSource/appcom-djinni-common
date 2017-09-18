@@ -15,6 +15,7 @@ declare NATIVE_LIBRARIES=(
 	"boost:android:1.64.0:zip"
 	"curl:android:7.52.1:zip"
 	"nlohmann-json:android:2.1.1:zip"
+	"dropbox-djinni:android:428:zip"
 	)
 
 # ======================================================================================================================
