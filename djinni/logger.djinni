@@ -9,6 +9,6 @@ LogLevel = enum {
 }
 
 Logger = interface +c {
-    # initialise the logger for the specified loglevel (needs to be called once for all libraries that use this)
+    # initialise the logger for the specified loglevel (needs to be called once for the whole app runtime)
     static init(loglevel: LogLevel);
 }
