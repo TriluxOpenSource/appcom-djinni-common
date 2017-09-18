@@ -11,10 +11,10 @@ declare VERSION=$(git describe --tags ${COMMIT})
 declare OUTPUT_FILE=ac-ms-common-sdk-ios-${VERSION}.zip
 
 # set to TRUE to zip archive
-declare ZIP_RESULTS=FALSE
+declare ZIP_RESULTS=TRUE
 
 # set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
-declare DEPLOY_TO_NEXUS=FALSE
+declare DEPLOY_TO_NEXUS=TRUE
 
 # ======================================================================================================================
 
