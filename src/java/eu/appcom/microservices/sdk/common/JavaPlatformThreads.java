@@ -17,10 +17,6 @@
 
 package eu.appcom.microservices.sdk.common;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 /**
  * Cross-language platform thread implementation using java.thread.Thread.
  * Create a subclass and override configureThread() to customize the created threads.
@@ -34,7 +30,7 @@ public class JavaPlatformThreads extends PlatformThreads {
 
     /** Creates and starts a new thread which will call the given function. */
     @Override
-    public void createThread(@Nonnull String name, @Nonnull ThreadFunc func) {
+    public void createThread(String name, ThreadFunc func) {
         final ThreadFunc passFunc = func;
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -56,7 +52,6 @@ public class JavaPlatformThreads extends PlatformThreads {
      * notion of a main/UI thread.  Platform-specific subclasses may override.
      */
     @Override
-    @CheckForNull
     public Boolean isMainThread() {
         return null;
     }

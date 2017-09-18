@@ -17,9 +17,6 @@
 
 package eu.appcom.microservices.sdk.common;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
 import android.os.Looper;
 
 /**
@@ -43,7 +40,6 @@ public class AndroidPlatformThreads extends JavaPlatformThreads {
      * notion of a main thread.
      */
     @Override
-    @Nonnull
     public Boolean isMainThread() {
         return Looper.myLooper() == sMainLooper;
     }
