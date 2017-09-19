@@ -10,9 +10,8 @@ endif()
 # General
 # ----------------------------------------------------------------------------------------------------------------------
 
-include_directories(# djinni suppport lib
-                    ../deps/djinni/support-lib
-                    ../deps/djinni/support-lib/objc
+include_directories(# djinni support library
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/djinni/objc
                     # djinni generated code
                     ../generated-src/cpp
                     ../generated-src/objc

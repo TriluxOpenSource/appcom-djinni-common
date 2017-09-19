@@ -13,11 +13,10 @@ endif()
 set(CMAKE_CXX_FLAGS "-Wall -fexceptions -frtti")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../cmake")
 
-include_directories(
+include_directories(# djinni support library
+                    ${CMAKE_CURRENT_SOURCE_DIR}/include/djinni/jni
                     # android deps
                     "${CMAKE_CURRENT_LIST_DIR}/include"
-                    # djinni
-                    "${CMAKE_CURRENT_LIST_DIR}/../deps/djinni/support-lib/jni"
                     # djinni generated
                     "${CMAKE_CURRENT_LIST_DIR}/../generated-src/jni"
                     "${CMAKE_CURRENT_LIST_DIR}/../generated-src/cpp"
