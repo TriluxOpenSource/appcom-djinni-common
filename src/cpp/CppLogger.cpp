@@ -69,7 +69,7 @@ void CppLogger::init(LogLevel loglevel)
         boost::log::core::get()->add_sink(sink);
 #endif
         // set log filter
-        logging::core::get()->set_filter(boost::log::trivial::severity >= level);
+        boost::log::core::get()->set_filter(boost::log::trivial::severity >= level);
         isAlreadyInitialised = true;
     }
     mutex.unlock();
