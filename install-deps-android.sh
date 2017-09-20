@@ -42,7 +42,7 @@ for library in ${NATIVE_LIBRARIES[@]}; do
 	  -Ddest=lib.zip
 
 	# extract zip archive
-	unzip lib.zip
+	unzip -o lib.zip
 
 	# cleanuo
 	rm lib.zip

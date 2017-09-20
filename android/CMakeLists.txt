@@ -117,4 +117,4 @@ install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../src/java/eu"
         DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/jni/")
 
 install(FILES ${jni_generated_headers} ${cpp_generated_headers} ${cpp_headers}
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/appcom/sdk/common")

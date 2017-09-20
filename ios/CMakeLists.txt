@@ -106,4 +106,4 @@ install(FILES
         ${objc_headers} 
         ${objcpp_generated_headers} 
         ${cpp_generated_headers}
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/appcom/sdk/common")
