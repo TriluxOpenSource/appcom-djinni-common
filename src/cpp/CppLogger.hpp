@@ -24,7 +24,9 @@ extern "C" {
 
 namespace appcom
 {
+#if defined(__ANDROID__)
 BOOST_LOG_ATTRIBUTE_KEYWORD(module, "Module", std::string)
+#endif
 
 class CppLogger : Logger
 {
@@ -43,11 +45,4 @@ private:
 
   static boost::log::trivial::severity_level logLevelToBoost(LogLevel loglevel);
 };
-
-//! set the module to a specific name
-void setModule(boost::log::sources::severity_logger<boost::log::trivial::severity_level> &logger,
-               const std::string &name);
-
-//using Logger = boost::log::sources::severity_logger<boost::log::trivial::severity_level>;
-
 } // namespace appcom

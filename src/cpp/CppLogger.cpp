@@ -58,18 +58,19 @@ void CppLogger::init(LogLevel loglevel)
     mutex.lock();
     if (!isAlreadyInitialised)
     {
-        boost::log::add_common_attributes();
         boost::log::trivial::severity_level level = logLevelToBoost(loglevel);
-
+        
 #if defined(__ANDROID__)
+        boost::log::add_common_attributes();
+
         typedef boost::log::sinks::synchronous_sink<android_sink_backend> android_sink;
         boost::shared_ptr<android_sink> sink = boost::make_shared<android_sink>();
 
         sink->set_filter(boost::log::trivial::severity >= level);
         boost::log::core::get()->add_sink(sink);
-#endif
-        // set log filter
+#else
         boost::log::core::get()->set_filter(boost::log::trivial::severity >= level);
+#endif
         isAlreadyInitialised = true;
     }
     mutex.unlock();
@@ -112,12 +113,6 @@ android_LogPriority CppLogger::boostLogLevelToAndroid(boost::log::trivial::sever
     return logPriority;
 }
 #endif
-
-void appcom::setModule(boost::log::sources::severity_logger<boost::log::trivial::severity_level> &logger,
-                       const std::string &name)
-{
-    logger.add_attribute(module.get_name(), boost::log::attributes::constant<std::string>(name));
-}
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Private
