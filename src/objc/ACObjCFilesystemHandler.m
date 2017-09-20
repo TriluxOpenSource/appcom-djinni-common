@@ -26,6 +26,11 @@
                                                                             YES);
             return paths[0];
         } break;
+
+        case ACFilesystemDirectoryResources: {
+            return [[NSBundle mainBundle] resourcePath];
+        } break;
+
         default:
             break;
     }

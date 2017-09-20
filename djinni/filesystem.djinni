@@ -4,6 +4,8 @@ FilesystemDirectory = enum {
     Documents;
     # the directory where an app stores temporary data (may be erased by the operating system at any time)
     Temp;
+    # the directory where the app stores the delivered data (app resources)
+    Resources;
 }
 
 FilesystemHandler = interface +j +o {
