@@ -1,0 +1,5 @@
+# manages assets inside the apk
+AssetManager = interface +j {
+    # reads a complete file into a byte array
+    getAssetData(path: string): binary;
+}
