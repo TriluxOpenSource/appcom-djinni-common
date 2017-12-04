@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <Logger.hpp>
-#include <LogLevel.hpp>
+#include "Logger.hpp"
+#include "LogLevel.hpp"
 
 #if defined(__ANDROID__)
 extern "C" {

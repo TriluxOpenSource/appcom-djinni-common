@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include <PlatformThreads.hpp>
-#include <ThreadFunc.hpp>
+#include "PlatformThreads.hpp"
+#include "ThreadFunc.hpp"
 
 #include <functional>
 #include <thread>
