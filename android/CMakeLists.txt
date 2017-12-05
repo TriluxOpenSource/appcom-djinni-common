@@ -41,11 +41,10 @@ set(BOOST_INCLUDEDIR "${CMAKE_CURRENT_LIST_DIR}/include")
 set(BOOST_LIBRARYDIR "${CMAKE_CURRENT_LIST_DIR}/lib/${CMAKE_ANDROID_ARCH_ABI}")
 set(BOOST_ROOT "${CMAKE_CURRENT_LIST_DIR}")
 set(Boost_NO_SYSTEM_PATHS ON)
+set(Boost_USE_STATIC_LIBS ON)
 
 message(STATUS "BOOST_INCLUDEDIR = ${BOOST_INCLUDEDIR}")
 message(STATUS "BOOST_LIBRARYDIR = ${BOOST_LIBRARYDIR}")
-
-set(Boost_USE_STATIC_LIBS ON)
 
 #find_package(Boost 1.64.0 REQUIRED COMPONENTS log PATHS "${CMAKE_CURRENT_LIST_DIR}/../cmake" NO_DEFAULT_PATH)
 find_package(Boost REQUIRED COMPONENTS log log_setup system thread filesystem)
@@ -118,4 +117,4 @@ install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../src/java/eu"
         DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/jni/")
 
 install(FILES ${jni_generated_headers} ${cpp_generated_headers} ${cpp_headers}
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/appcom/sdk/common")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/appcom/sdk")
