@@ -9,7 +9,7 @@ declare VERSION=$(git describe --tags ${COMMIT})
 declare OUTPUT_FILE=ac-ms-common-sdk-android-${VERSION}.zip
 
 # set to TRUE to zip archive
-declare ZIP_RESULTS=TRUE
+declare ZIP_RESULTS=FALSE
 
 # set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
 declare DEPLOY_TO_NEXUS=TRUE
@@ -59,8 +59,6 @@ function build_android {
 build_android 21 arm64-v8a
 build_android 19 armeabi
 build_android 19 armeabi-v7a
-build_android 19 mips
-#build_android 21 mips64
 build_android 19 x86
 build_android 21 x86_64
 
