@@ -46,19 +46,7 @@ set(Boost_USE_STATIC_LIBS ON)
 message(STATUS "BOOST_INCLUDEDIR = ${BOOST_INCLUDEDIR}")
 message(STATUS "BOOST_LIBRARYDIR = ${BOOST_LIBRARYDIR}")
 
-#find_package(Boost 1.64.0 REQUIRED COMPONENTS log PATHS "${CMAKE_CURRENT_LIST_DIR}/../cmake" NO_DEFAULT_PATH)
-find_package(Boost REQUIRED COMPONENTS log log_setup system thread filesystem)
-
-# ----------------------------------------------------------------------------------------------------------------------
-# cURL - https://curl.haxx.se/libcurl/
-# ----------------------------------------------------------------------------------------------------------------------
-
-find_library(curl NAMES curl PATHS "${CMAKE_CURRENT_LIST_DIR}/lib/${CMAKE_ANDROID_ARCH_ABI}" NO_DEFAULT_PATH)
-if(${curl} STREQUAL "curl-NOTFOUND")
-    message(FATAL_ERROR "Couldn't find the curl library. Please check the Readme for required dependencies.")
-else()
-    message(STATUS "Found 'curl' at: ${curl}")
-endif()
+find_package(Boost 1.66.0 REQUIRED COMPONENTS log log_setup system thread filesystem)
 
 # ----------------------------------------------------------------------------------------------------------------------
 # nlohmann/json - https://github.com/nlohmann/json
@@ -84,10 +72,10 @@ else()
 endif()
 
 # ----------------------------------------------------------------------------------------------------------------------
-# appcom common microservice sdk
+# appcom-djinni-common
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_library(ac-ms-common-sdk
+add_library(appcom-djinni-common
             SHARED
             # generated code
             ${jni_generated_src}
@@ -95,16 +83,15 @@ add_library(ac-ms-common-sdk
             ${cpp_src}
             )
 
-target_link_libraries(ac-ms-common-sdk
+target_link_libraries(appcom-djinni-common
                       ${djinni}
-                      ${curl}
                       ${Boost_LIBRARIES}
                       android
                       log)
 
-set_target_properties(ac-ms-common-sdk PROPERTIES COMPILE_FLAGS "-fPIC")
+set_target_properties(appcom-djinni-common PROPERTIES COMPILE_FLAGS "-fPIC")
 
-install(TARGETS ac-ms-common-sdk
+install(TARGETS appcom-djinni-common
         LIBRARY DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/lib/${CMAKE_ANDROID_ARCH_ABI}")
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../generated-src/java/eu"
@@ -117,4 +104,4 @@ install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../src/java/eu"
         DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/jni/")
 
 install(FILES ${jni_generated_headers} ${cpp_generated_headers} ${cpp_headers}
-        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/appcom/sdk")
+        DESTINATION "${CMAKE_CURRENT_LIST_DIR}/../output/include/appcom/djinni/common")

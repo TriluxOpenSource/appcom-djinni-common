@@ -8,13 +8,13 @@ declare IOS_PLATFORM='OS'
 
 declare COMMIT=$(git rev-list --tags --max-count=1)
 declare VERSION=$(git describe --tags ${COMMIT})
-declare OUTPUT_FILE=ac-ms-common-sdk-ios-${VERSION}.zip
+declare OUTPUT_FILE=appcom-djinni-common-ios-${VERSION}.zip
 
 # set to TRUE to zip archive
-declare ZIP_RESULTS=TRUE
+declare ZIP_RESULTS=FALSE
 
 # set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
-declare DEPLOY_TO_NEXUS=TRUE
+declare DEPLOY_TO_NEXUS=FALSE
 
 # ======================================================================================================================
 
@@ -31,7 +31,7 @@ mkdir build
 cd build
 
 # configure
-cmake -DCMAKE_TOOLCHAIN_FILE="../${IOS_TOOLCHAIN}" -DIOS_PLATFORM=${IOS_PLATFORM} ../ios
+cmake -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=${IOS_PLATFORM} ../ios
 
 # compile
 make install
@@ -66,11 +66,11 @@ if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ] && [ "${ZIP_RESULTS}" = "TRUE" ]; then
     command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven 2 is required but it's not installed. Aborting."; exit 1; }
 
     mvn deploy:deploy-file -e \
-    -DgroupId=ac-ms-common-sdk \
-    -DartifactId=ios \
+    -DgroupId=appcom.djinni.common.ios \
+    -DartifactId=sdk11-clang \
     -Dversion=${VERSION} \
     -DgeneratePom=true \
     -DrepositoryId=appcom-nexus \
-    -Durl=http://appcom-nexus/nexus/content/repositories/appcom-microservice-sdks \
+    -Durl=http://appcom-nexus/nexus/content/repositories/appcom-native-libraries \
     -Dfile=${OUTPUT_FILE}
 fi

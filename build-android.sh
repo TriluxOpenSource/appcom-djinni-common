@@ -3,16 +3,20 @@ set -e
 
 declare TOOLCHAIN_VERSION=clang
 declare STL_TYPE=c++_static
+declare NDK_VERSION=r16b
+declare NDK_MIN_API=19
 
 declare COMMIT=$(git rev-list --tags --max-count=1)
 declare VERSION=$(git describe --tags ${COMMIT})
-declare OUTPUT_FILE=ac-ms-common-sdk-android-${VERSION}.zip
+declare OUTPUT_FILE=appcom-djinni-common-android-${VERSION}.zip
+declare ARTIFACT_ID="${NDK_VERSION}-${NDK_MIN_API}-${TOOLCHAIN_VERSION}"
+declare NDK_PATH="/opt/android-ndks/android-ndk-${NDK_VERSION}"
 
 # set to TRUE to zip archive
-declare ZIP_RESULTS=FALSE
+declare ZIP_RESULTS=TRUE
 
 # set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
-declare DEPLOY_TO_NEXUS=TRUE
+declare DEPLOY_TO_NEXUS=FALSE
 
 # ======================================================================================================================
 
@@ -42,7 +46,7 @@ function build_android {
     cmake ../android \
     -DCMAKE_SYSTEM_NAME=Android \
     -DCMAKE_SYSTEM_VERSION=${1} \
-    -DCMAKE_ANDROID_NDK=${ANDROID_NDK} \
+    -DCMAKE_ANDROID_NDK=${NDK_PATH} \
     -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=${TOOLCHAIN_VERSION} \
     -DCMAKE_ANDROID_ARCH_ABI=${2} \
     -DCMAKE_ANDROID_STL_TYPE=${STL_TYPE}
@@ -86,11 +90,11 @@ if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ] && [ "${ZIP_RESULTS}" = "TRUE" ]; then
     command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven 2 is required but it's not installed. Aborting."; exit 1; }
 
     mvn deploy:deploy-file -e \
-    -DgroupId=ac-ms-common-sdk \
-    -DartifactId=android \
+    -DgroupId=appcom.djinni.common.android \
+    -DartifactId=${ARTIFACT_ID} \
     -Dversion=${VERSION} \
     -DgeneratePom=true \
     -DrepositoryId=appcom-nexus \
-    -Durl=http://appcom-nexus/nexus/content/repositories/appcom-microservice-sdks \
+    -Durl=http://appcom-nexus/nexus/content/repositories/appcom-native-libraries \
     -Dfile=${OUTPUT_FILE}
 fi

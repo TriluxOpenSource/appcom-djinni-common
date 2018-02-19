@@ -1,0 +1,19 @@
+@import "assets.djinni"
+@import "filesystem.djinni"
+@import "http.djinni"
+@import "logger.djinni"
+@import "threads.djinni"
+
+# This class manages common known dependencies, so that the user of this library only has to pass an instance of the
+# platform version of this to his library / implementation and the library / implementation can access these
+# dependencies if needed
+DependencyManager = interface +j +o {
+    # the platform specific asset manager - currently only android, ios will return nil
+    getAssetManager(): AssetManager;
+    # the platform specific http handler
+    getHttpHandler(): HttpHandler;
+    # the platform specific filesystem handler
+    getFilesystemHandler(): FilesystemHandler;
+    # the platform specific thread handler
+    getPlatformThreads(): PlatformThreads;
+}

@@ -27,21 +27,9 @@ file(GLOB cpp_src "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
 # Boost - http://www.boost.org
 # ----------------------------------------------------------------------------------------------------------------------
 
-find_package(Boost 1.64.0 REQUIRED COMPONENTS log log_setup system thread filesystem)
+find_package(Boost 1.66.0 REQUIRED COMPONENTS log log_setup system thread filesystem)
 
 include_directories (${Boost_INCLUDE_DIRS})
-
-# ----------------------------------------------------------------------------------------------------------------------
-# cURL - https://curl.haxx.se/libcurl/
-# ----------------------------------------------------------------------------------------------------------------------
-
-find_library(curl NAMES "curl")
-
-if(${curl} STREQUAL "curl-NOTFOUND")
-    message(FATAL_ERROR "Couldn't find the curl library. Please check the Readme for required dependencies.")
-else()
-    message(STATUS "Found 'curl' at: ${curl}")
-endif()
 
 # ----------------------------------------------------------------------------------------------------------------------
 # JNI

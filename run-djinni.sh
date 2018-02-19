@@ -5,13 +5,13 @@ declare cpp_out="$base_dir/generated-src/cpp"
 declare jni_out="$base_dir/generated-src/jni"
 declare objc_out="$base_dir/generated-src/objc"
 declare objcpp_out="$base_dir/generated-src/objcpp"
-declare java_out="$base_dir/generated-src/java/eu/appcom/microservices/sdk/common"
-declare java_package="eu.appcom.microservices.sdk.common"
+declare java_out="$base_dir/generated-src/java/eu/appcom/djinni/common"
+declare java_package="eu.appcom.djinni.common"
 declare namespace="appcom"
 declare objc_prefix="AC"
-declare djinni_file="ac-ms-common-sdk.djinni"
+declare djinni_file="djinni/appcom-common.djinni"
 declare yaml_out="output"
-declare yaml_out_file="ac-ms-common-sdk.yml"
+declare yaml_out_file="appcom-common.yml"
 
 rm -r $base_dir/generated-src/*
 

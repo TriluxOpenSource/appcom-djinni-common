@@ -5,7 +5,7 @@
 //  Copyright (c) 2017 appcom interactive GmbH. All rights reserved.
 //
 
-package eu.appcom.microservices.sdk.common;
+package eu.appcom.djinni.common;
 
 import android.content.Context;
 import android.content.ContextWrapper;

@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 
-package eu.appcom.microservices.sdk.common;
+package eu.appcom.djinni.common;
 
 import android.os.Looper;
 
@@ -29,7 +29,8 @@ public class AndroidPlatformThreads extends JavaPlatformThreads {
     /**
      * Creates an instance.
      */
-    public AndroidPlatformThreads() {}
+    public AndroidPlatformThreads() {
+    }
 
     /**
      * Determines whether the calling thread is the main UI thread of the

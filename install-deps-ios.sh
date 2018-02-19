@@ -14,9 +14,8 @@ declare PLATFORM=$1
 
 # add all native libraries to this array that needs to be installed
 declare NATIVE_LIBRARIES=(
-	"boost:ios:1.65.0:zip"
-	"curl:ios:7.52.1:zip"
-	"nlohmann-json:ios:2.1.1:zip"
+	"boost.ios:sdk11.2-clang:1.66.0:zip"
+	"nlohmann-json:ios:3.1.1:zip"
 	"dropbox-djinni:ios:428:zip"
 	)
 

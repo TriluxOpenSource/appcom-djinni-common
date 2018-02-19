@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 
-package eu.appcom.microservices.sdk.common;
+package eu.appcom.djinni.common;
 
 /**
  * Cross-language platform thread implementation using java.thread.Thread.
@@ -26,7 +26,8 @@ public class JavaPlatformThreads extends PlatformThreads {
     /**
      * Creates an instance.
      */
-    public JavaPlatformThreads() {}
+    public JavaPlatformThreads() {
+    }
 
     /** Creates and starts a new thread which will call the given function. */
     @Override
@@ -60,5 +61,6 @@ public class JavaPlatformThreads extends PlatformThreads {
      * Called after each thread is created, but before it is started.
      * The default implementation does nothing, resulting in a default thread configuration.
      */
-    protected void configureThread(Thread thread) {}
+    protected void configureThread(Thread thread) {
+    }
 }
