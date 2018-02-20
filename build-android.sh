@@ -44,12 +44,13 @@ function build_android {
 
     # configure build
     cmake ../android \
-    -DCMAKE_SYSTEM_NAME=Android \
-    -DCMAKE_SYSTEM_VERSION=${1} \
-    -DCMAKE_ANDROID_NDK=${NDK_PATH} \
-    -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=${TOOLCHAIN_VERSION} \
-    -DCMAKE_ANDROID_ARCH_ABI=${2} \
-    -DCMAKE_ANDROID_STL_TYPE=${STL_TYPE}
+        -DCMAKE_BUILD_TYPE=RELEASE \
+        -DCMAKE_SYSTEM_NAME=Android \
+        -DCMAKE_SYSTEM_VERSION=${1} \
+        -DCMAKE_ANDROID_NDK=${NDK_PATH} \
+        -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=${TOOLCHAIN_VERSION} \
+        -DCMAKE_ANDROID_ARCH_ABI=${2} \
+        -DCMAKE_ANDROID_STL_TYPE=${STL_TYPE}
 
     # compile
     make install

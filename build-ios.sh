@@ -36,7 +36,7 @@ cd build
 # build ios
 
 # configure
-cmake -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=OS ../ios
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=OS ../ios
 
 # compile
 make install
@@ -54,7 +54,7 @@ rm -r ./*
 # build ios simulator 32 bit
 
 # configure
-cmake -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=SIMULATOR ../ios
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=SIMULATOR ../ios
 
 # compile
 make install
@@ -69,7 +69,7 @@ rm -r ./*
 # build ios simulator 32 bit
 
 # configure
-cmake -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=SIMULATOR64 ../ios
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=SIMULATOR64 ../ios
 
 # compile
 make install
