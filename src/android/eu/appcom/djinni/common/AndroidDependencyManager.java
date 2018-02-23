@@ -7,6 +7,8 @@
 
 package eu.appcom.djinni.common;
 
+import android.content.Context;
+
 import okhttp3.OkHttpClient;
 
 import eu.appcom.djinni.common.AndroidAssetManager;
@@ -36,7 +38,7 @@ public class AndroidDependencyManager extends DependencyManager {
     @Override
     public AssetManager getAssetManager() {
         if (_assetManager == null) {
-            _assetManager = new AndroidAssetManager(ctx);
+            _assetManager = new AndroidAssetManager(_ctx);
         }
         return _assetManager;
     }
@@ -54,7 +56,7 @@ public class AndroidDependencyManager extends DependencyManager {
     @Override
     public FilesystemHandler getFilesystemHandler() {
         if (_filesystemHandler == null) {
-            _filesystemHandler = new AndroidFilesystemHandler(ctx);
+            _filesystemHandler = new AndroidFilesystemHandler(_ctx);
         }
         return _filesystemHandler;
     }
