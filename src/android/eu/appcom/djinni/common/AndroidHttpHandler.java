@@ -31,7 +31,7 @@ public class AndroidHttpHandler extends HttpHandler {
     }
 
     @Override
-    public void sendHttpRequest(HttpRequest request, HttpListener delegate) {
+    public void sendHttpRequest(HttpRequest request, final HttpListener delegate) {
 
         _client.newCall(transformHttpRequest(request)).enqueue(new Callback() {
             @Override
