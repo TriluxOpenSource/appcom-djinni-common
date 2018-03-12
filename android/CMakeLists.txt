@@ -13,15 +13,10 @@ endif()
 set(CMAKE_CXX_FLAGS "-Wall -fexceptions -frtti")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../cmake")
 
-include_directories(# djinni support library
-                    ${CMAKE_CURRENT_SOURCE_DIR}/include/djinni/jni
-                    # android deps
-                    "${CMAKE_CURRENT_LIST_DIR}/include"
-                    # djinni generated
-                    "${CMAKE_CURRENT_LIST_DIR}/../generated-src/jni"
-                    "${CMAKE_CURRENT_LIST_DIR}/../generated-src/cpp"
-                    # implementation
-                    "${CMAKE_CURRENT_LIST_DIR}/../src")
+# djinni support library
+file(GLOB jni_support_src
+    "${CMAKE_CURRENT_LIST_DIR}/../deps/djinni/support-lib/jni/djinni_main.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../deps/djinni/support-lib/jni/djinni_support.cpp")
 
 # djinni generated code
 file(GLOB jni_generated_src "${CMAKE_CURRENT_LIST_DIR}/../generated-src/jni/*.cpp")
@@ -60,23 +55,13 @@ else()
 endif()
 
 # ----------------------------------------------------------------------------------------------------------------------
-# djinni support library
-# ----------------------------------------------------------------------------------------------------------------------
-
-find_library(djinni NAMES djinni-support PATHS "${CMAKE_CURRENT_LIST_DIR}/lib/${CMAKE_ANDROID_ARCH_ABI}" 
-             NO_DEFAULT_PATH)
-if(${djinni} STREQUAL "djinni-NOTFOUND")
-    message(FATAL_ERROR "Couldn't find the djinni library. Please check the Readme for required dependencies.")
-else()
-    message(STATUS "Found 'djinni' at: ${djinni}")
-endif()
-
-# ----------------------------------------------------------------------------------------------------------------------
 # appcom-djinni-common
 # ----------------------------------------------------------------------------------------------------------------------
 
 add_library(appcom-djinni-common
             SHARED
+            # djinni support library
+            ${jni_support_src}
             # generated code
             ${jni_generated_src}
             # implementation
@@ -84,10 +69,22 @@ add_library(appcom-djinni-common
             )
 
 target_link_libraries(appcom-djinni-common
-                      ${djinni}
                       ${Boost_LIBRARIES}
                       android
                       log)
+
+target_include_directories(appcom-djinni-common PRIVATE
+    # djinni support library
+    "${CMAKE_CURRENT_LIST_DIR}/../deps/djinni/support-lib"
+    "${CMAKE_CURRENT_LIST_DIR}/../deps/djinni/support-lib/jni"
+    # android deps
+    "${CMAKE_CURRENT_LIST_DIR}/include"
+    # djinni generated
+    "${CMAKE_CURRENT_LIST_DIR}/../generated-src/jni"
+    "${CMAKE_CURRENT_LIST_DIR}/../generated-src/cpp"
+    # implementation
+    "${CMAKE_CURRENT_LIST_DIR}/../src")
+
 
 set_target_properties(appcom-djinni-common PROPERTIES COMPILE_FLAGS "-fPIC")
 

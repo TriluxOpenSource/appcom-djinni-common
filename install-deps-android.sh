@@ -14,7 +14,6 @@ declare NEXUS_REPOSITORY_NATIVE_LIBRARIES=${NEXUS_REPOSITORY_URL}/appcom-native-
 declare NATIVE_LIBRARIES=(
 	"boost.android:r16b-15-clang:1.66.0:zip"
 	"nlohmann-json:android:3.1.1:zip"
-	"dropbox-djinni:android:428:zip"
 	)
 
 # ======================================================================================================================
