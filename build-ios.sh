@@ -15,7 +15,7 @@ declare IOS_COMPILER=clang
 declare ZIP_RESULTS=TRUE
 
 # set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
-declare DEPLOY_TO_NEXUS=FALSE
+declare DEPLOY_TO_NEXUS=TRUE
 
 # ======================================================================================================================
 # prepare build
