@@ -8,7 +8,7 @@ declare VERSION=$(git describe --tags ${COMMIT})
 declare OUTPUT_FILE=appcom-djinni-common-ios-${VERSION}.zip
 
 # these values are used for nexus upload - please check for correctness before using nexus deploy
-declare IOS_SDK_VERSION=sdk11.2
+declare IOS_SDK_VERSION=sdk$(xcodebuild -showsdks | grep iphoneos | awk '{print $4}' | sed 's/[^0-9,\.]*//g')
 declare IOS_COMPILER=clang
 
 # set to TRUE to zip archive
@@ -66,7 +66,7 @@ mv ../output/lib ../output/lib-simulator
 rm -r ./*
 
 # ======================================================================================================================
-# build ios simulator 32 bit
+# build ios simulator 64 bit
 
 # configure
 cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=SIMULATOR64 ../ios
