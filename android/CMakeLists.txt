@@ -37,11 +37,15 @@ set(BOOST_LIBRARYDIR "${CMAKE_CURRENT_LIST_DIR}/lib/${CMAKE_ANDROID_ARCH_ABI}")
 set(BOOST_ROOT "${CMAKE_CURRENT_LIST_DIR}")
 set(Boost_NO_SYSTEM_PATHS ON)
 set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME ON)
 
 message(STATUS "BOOST_INCLUDEDIR = ${BOOST_INCLUDEDIR}")
 message(STATUS "BOOST_LIBRARYDIR = ${BOOST_LIBRARYDIR}")
 
-find_package(Boost 1.66.0 REQUIRED COMPONENTS log log_setup system thread filesystem)
+find_package(Boost 1.67.0 REQUIRED COMPONENTS log log_setup system thread filesystem)
+
+add_definitions(-DBOOST_FILESYSTEM_NO_DEPRECATED)
 
 # ----------------------------------------------------------------------------------------------------------------------
 # nlohmann/json - https://github.com/nlohmann/json

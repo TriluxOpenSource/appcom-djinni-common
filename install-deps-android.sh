@@ -12,7 +12,7 @@ declare NEXUS_REPOSITORY_NATIVE_LIBRARIES=${NEXUS_REPOSITORY_URL}/appcom-native-
 
 # add all native libraries to this array that needs to be installed
 declare NATIVE_LIBRARIES=(
-	"boost.android:r16b-15-clang:1.66.0:zip"
+	"boost.android:r16b-15-clang:1.67.0:zip"
 	"nlohmann-json:android:3.1.1:zip"
 	)
 
