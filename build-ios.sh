@@ -5,6 +5,7 @@ declare IOS_TOOLCHAIN='cmake/ios.toolchain.cmake'
 
 declare COMMIT=$(git rev-list --tags --max-count=1)
 declare VERSION=$(git describe --tags ${COMMIT})
+declare BRANCH=$(git rev-parse --abbrev-ref HEAD)
 declare OUTPUT_FILE=appcom-djinni-common-ios-${VERSION}.zip
 
 # these values are used for nexus upload - please check for correctness before using nexus deploy
@@ -120,7 +121,7 @@ fi
 #
 # upload to nexus
 
-if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ] && [ "${ZIP_RESULTS}" = "TRUE" ]; then
+if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ] && [ "${ZIP_RESULTS}" = "TRUE" ] && [ "${BRANCH}" = "master" ]; then
 
     # check if maven is installed
     command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven 2 is required but it's not installed. Aborting."; exit 1; }
