@@ -3,15 +3,13 @@ set -e
 
 declare TOOLCHAIN_VERSION=clang
 declare STL_TYPE=c++_static
-declare NDK_VERSION=r16b
+declare NDK_VERSION=""
 declare NDK_MIN_API=19
 
 declare COMMIT=$(git rev-list --tags --max-count=1)
 declare VERSION=$(git describe --tags ${COMMIT})
 declare BRANCH=$(git rev-parse --abbrev-ref HEAD)
 declare OUTPUT_FILE=appcom-djinni-common-android-${VERSION}.zip
-declare ARTIFACT_ID="${NDK_VERSION}-${NDK_MIN_API}-${TOOLCHAIN_VERSION}"
-declare NDK_PATH="/opt/android-ndks/android-ndk-${NDK_VERSION}"
 
 # set to TRUE to zip archive
 declare ZIP_RESULTS=TRUE
@@ -35,6 +33,47 @@ rm -r output/* || true
 # generate djinni code
 ./run-djinni.sh
 
+#=======================================================================================================================
+
+function getAndroidNdkVersion()
+{
+    # get properties file that contains the ndk revision number
+    local NDK_RELEASE_FILE=$ANDROID_NDK"/source.properties"
+    if [ -f "${NDK_RELEASE_FILE}" ]; then
+        local NDK_RN=`cat $NDK_RELEASE_FILE | grep 'Pkg.Revision' | sed -E 's/^.*[=] *([0-9]+[.][0-9]+)[.].*/\1/g'`
+    else
+        echo "ERROR: can not find android ndk version"
+        exit 1
+    fi
+
+    # convert ndk revision number
+    case "${NDK_RN#*'.'}" in
+        "0")
+            NDK_VERSION="r${NDK_RN%%'.'*}"
+            ;;
+
+        "1")
+            NDK_VERSION="r${NDK_RN%%'.'*}b"
+            ;;
+
+        "2")
+            NDK_VERSION="r${NDK_RN%%'.'*}c"
+            ;;
+        
+        "3")
+            NDK_VERSION="r${NDK_RN%%'.'*}d"
+            ;;
+
+        "4")
+            NDK_VERSION="r${NDK_RN%%'.'*}e"
+            ;;
+
+        *)
+            echo "Undefined or not supported Android NDK version: $NDK_RN"
+            exit 1
+    esac
+}
+
 # ======================================================================================================================
 
 function build_android {
@@ -48,10 +87,10 @@ function build_android {
         -DCMAKE_BUILD_TYPE=RELEASE \
         -DCMAKE_SYSTEM_NAME=Android \
         -DCMAKE_SYSTEM_VERSION=${1} \
-        -DCMAKE_ANDROID_NDK=${NDK_PATH} \
-        -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=${TOOLCHAIN_VERSION} \
+        -DCMAKE_ANDROID_NDK=${ANDROID_NDK} \
         -DCMAKE_ANDROID_ARCH_ABI=${2} \
-        -DCMAKE_ANDROID_STL_TYPE=${STL_TYPE}
+        -DCMAKE_ANDROID_STL_TYPE=${STL_TYPE} \
+        -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=${TOOLCHAIN_VERSION}
 
     # compile
     make install
@@ -62,8 +101,12 @@ function build_android {
 
 # ======================================================================================================================
 
+getAndroidNdkVersion
+
+declare ARTIFACT_ID="${NDK_VERSION}-${NDK_MIN_API}-${TOOLCHAIN_VERSION}"
+declare TOOLCHAIN_FILE="${ANDROID_NDK}/build/cmake/android.toolchain.cmake"
+
 build_android 21 arm64-v8a
-build_android 19 armeabi
 build_android 19 armeabi-v7a
 build_android 19 x86
 build_android 21 x86_64
