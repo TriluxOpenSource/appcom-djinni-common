@@ -4,25 +4,40 @@ This library contains functions that are commonly used in appcom djinni projects
 
 ## Dependencies
 
+The following libraries must be installed in the corresponding folder for the target platform (`android` for Android and 
+`ios` for iOS). All libraries should be added as static libraries to keep the artifacts at a reasonable size (except the
+djinni support library for Android).
+The header files must be placed under `android/include` or `ios/include` and the library files must be added to
+`android/lib/$ARCH$` or `ios/lib`, depending on the target platform. For Android there must be a subfolder ($ARCH$) for 
+each architecture (`arm64-v8a`, `armeabi-v7a`, `x86` and `x86_64`).
+
 * [Boost](https://www.boost.org) 1.67
 * [Niels Lohmann JSON](https://github.com/nlohmann/json) 3.1.2
 * [Dropdbox Djinni](https://github.com/dropbox/djinni)
 
-## Build
+### Dropbox Djinni
 
-## Dependencies
+Dropbox djinni is required to be present at `deps/djinni`. This can be achieved via a git submodule:
 
-The djinni sources from [Github](https://github.com/dropbox/djinni) must be placed under `deps/djinni`.
+```
+git submodule add git@github.com:dropbox/djinni.git deps/djinni/
+```
 
-Android Libraries must be placed unter `android/lib/$ARCH$` where `$ARCH$` must be `arm64-v8a`, `armeabi-v7a`, `x86` and 
-`x86_64`. The Header files must be placed under `android/include`.
+## Build tools
 
-iOS Libraries must be placed unter `ios/lib`. The Header files must be placed under `ios/include`.
+To be able to build the library the following tools must be present.
 
-### Building for iOS
+* Android SDK - https://developer.android.com/studio/index.html
+* Android NDK - https://developer.android.com/ndk/downloads/index.html
+* CMake - https://cmake.org
 
-Execute `build-ios.sh` to build for iOS.
+### iOS
 
-### Building for Android
+* Xcode - https://developer.apple.com/xcode/
+* CMake - https://cmake.org
 
-Execute `build-android.sh` to build for Android.
+
+## Building
+
+To build the library the build script for the target platform can be executed (`build-android.sh` or `build-ios.sh`).
+For Android, the environmental ANDROID_NDK must be set to the path of the android ndk.
