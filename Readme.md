@@ -11,8 +11,8 @@ The header files must be placed under `android/include` or `ios/include` and the
 `android/lib/$ARCH$` or `ios/lib`, depending on the target platform. For Android there must be a subfolder ($ARCH$) for 
 each architecture (`arm64-v8a`, `armeabi-v7a`, `x86` and `x86_64`).
 
-* [Boost](https://www.boost.org) 1.67
-* [Niels Lohmann JSON](https://github.com/nlohmann/json) 3.1.2
+* [Boost](https://www.boost.org) 1.70.0
+* [Niels Lohmann JSON](https://github.com/nlohmann/json) 3.6.1
 * [Dropdbox Djinni](https://github.com/dropbox/djinni)
 
 ### Dropbox Djinni

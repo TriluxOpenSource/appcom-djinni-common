@@ -1,137 +1,51 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ----------------------------------------------------------------------------------------------------------------------
+# The MIT License (MIT)
+#
+# Copyright (c) 2019 Ralph-Gordon Paul. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+# documentation files (the "Software"), to deal in the Software without restriction, including without limitation the 
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit 
+# persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the 
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE 
+# WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
+# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# ----------------------------------------------------------------------------------------------------------------------
+
 set -e
 
-declare IOS_TOOLCHAIN='cmake/ios.toolchain.cmake'
+#=======================================================================================================================
+# settings
 
-declare COMMIT=$(git rev-list --tags --max-count=1)
-declare VERSION=$(git describe --tags ${COMMIT})
-declare BRANCH=$(git rev-parse --abbrev-ref HEAD)
-declare OUTPUT_FILE=appcom-djinni-common-ios-${VERSION}.zip
+declare CONAN_USER=appcom
+declare CONAN_CHANNEL=stable
 
-# these values are used for nexus upload - please check for correctness before using nexus deploy
-declare IOS_SDK_VERSION=sdk$(xcodebuild -showsdks | grep iphoneos | awk '{print $4}' | sed 's/[^0-9,\.]*//g')
-declare IOS_COMPILER=clang
+declare LIBRARY_VERSION=1.0.4
+declare IOS_SDK_VERSION=$(xcodebuild -showsdks | grep iphoneos | awk '{print $4}' | sed 's/[^0-9,\.]*//g')
 
-# set to TRUE to zip archive
-declare ZIP_RESULTS=TRUE
+#=======================================================================================================================
+# create conan package
 
-# set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
-declare DEPLOY_TO_NEXUS=FALSE
+function createConanPackage()
+{
+    local arch=$1
+    local build_type=$2
 
-# ======================================================================================================================
-# prepare build
+    conan create . appcom-djinni-common/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=iOS \
+        -s os.version=${IOS_SDK_VERSION} -s arch=${arch} -s build_type=${build_type} -o shared=False
+}
 
-declare ABSOLUTE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#=======================================================================================================================
+# create packages for all architectures and build types
 
-# cleanup possible previous build
-rm -rf build || true
-rm -rf output || true
-
-# generate djinni code
-./run-djinni.sh
-
-mkdir build
-cd build
-
-# ======================================================================================================================
-# build ios
-
-# configure
-cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=OS ../ios
-
-# compile
-make install
-
-# fix fat file
-xcrun ranlib ../output/lib/*.a
-
-# move libraries to ios specific folder for later fat file creation
-mv ../output/lib ../output/lib-ios
-
-# cleanup build folder
-rm -r ./*
-
-# ======================================================================================================================
-# build ios simulator 32 bit
-
-# configure
-cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=SIMULATOR ../ios
-
-# compile
-make install
-
-# move libraries to ios simulator specific folder for later fat file creation
-mv ../output/lib ../output/lib-simulator
-
-# cleanup build folder
-rm -r ./*
-
-# ======================================================================================================================
-# build ios simulator 64 bit
-
-# configure
-cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" -DIOS_PLATFORM=SIMULATOR64 ../ios
-
-# compile
-make install
-
-# move libraries to ios simulator specific folder for later fat file creation
-mv ../output/lib ../output/lib-simulator64
-
-# ======================================================================================================================
-# cleanup
-
-cd ..
-rm -rf build
-
-# ======================================================================================================================
-# create fat files
-
-declare LIBRARY_FILES=${ABSOLUTE_DIR}/output/lib-ios/*.a
-
-mkdir output/lib || true
-
-# iterate over all .a files
-for f in $LIBRARY_FILES
-do
-    file=${f##*/}
-    echo "Creating fat file $file ..."
-
-    lipo -create ${ABSOLUTE_DIR}/output/lib-ios/${file} \
-         ${ABSOLUTE_DIR}/output/lib-simulator/${file} \
-         ${ABSOLUTE_DIR}/output/lib-simulator64/${file} \
-         -output ${ABSOLUTE_DIR}/output/lib/${file}
-done
-
-# ======================================================================================================================
-#
-# zip final result
-
-if [ "${ZIP_RESULTS}" = "TRUE" ]; then
-
-    cd output
-
-    zip -r ${OUTPUT_FILE} include lib *.yml
-
-    # cleanup
-    rm -r include lib *.yml
-fi
-
-# ======================================================================================================================
-#
-# upload to nexus
-
-if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ] && [ "${ZIP_RESULTS}" = "TRUE" ] && [ "${BRANCH}" = "master" ]; then
-
-    # check if maven is installed
-    command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven 2 is required but it's not installed. Aborting."; exit 1; }
-
-    mvn deploy:deploy-file -e \
-    -DgroupId=appcom.djinni.common.ios \
-    -DartifactId="${IOS_SDK_VERSION}-${IOS_COMPILER}" \
-    -Dversion=${VERSION} \
-    -DgeneratePom=true \
-    -DrepositoryId=appcom-nexus \
-    -Durl=http://appcom-nexus/nexus/content/repositories/appcom-native-libraries \
-    -Dfile=${OUTPUT_FILE}
-fi
+# iOS (any arm arch will build fat libraries with armv7, armv7s and armv8 and set arch to 'AnyARM')
+createConanPackage armv8 Release
+createConanPackage armv8 Debug
+# SIMULATOR
+createConanPackage x86_64 Debug

@@ -10,7 +10,7 @@ declare java_package="eu.appcom.djinni.common"
 declare namespace="appcom"
 declare objc_prefix="AC"
 declare djinni_file="djinni/appcom-common.djinni"
-declare yaml_out="output"
+declare yaml_out="."
 declare yaml_out_file="appcom-common.yml"
 
 rm -r $base_dir/generated-src/*

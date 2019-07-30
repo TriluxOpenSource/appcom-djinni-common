@@ -1,77 +1,52 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ----------------------------------------------------------------------------------------------------------------------
+# The MIT License (MIT)
+#
+# Copyright (c) 2019 Ralph-Gordon Paul. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+# documentation files (the "Software"), to deal in the Software without restriction, including without limitation the 
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit 
+# persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the 
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE 
+# WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
+# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# ----------------------------------------------------------------------------------------------------------------------
+
 set -e
 
-declare COMMIT=$(git rev-list --tags --max-count=1)
-declare VERSION=$(git describe --tags ${COMMIT})
-declare OUTPUT_FILE=appcom-djinni-common-macos-${VERSION}.zip
+#=======================================================================================================================
+# settings
 
-# these values are used for nexus upload - please check for correctness before using nexus deploy
-declare MACOS_COMPILER=clang
+declare CONAN_USER=appcom
+declare CONAN_CHANNEL=stable
 
-# set to TRUE to zip archive
-declare ZIP_RESULTS=TRUE
+declare LIBRARY_VERSION=1.0.4
 
-# set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
-declare DEPLOY_TO_NEXUS=FALSE
+declare MACOS_SDK_VERSION=$(xcodebuild -showsdks | grep macosx | awk '{print $4}' | sed 's/[^0-9,\.]*//g')
 
-# ======================================================================================================================
-# prepare build
+#=======================================================================================================================
+# create conan package
 
-declare ABSOLUTE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+function createConanPackage()
+{
+    local arch=$1
+    local build_type=$2
 
-# cleanup possible previous build
-rm -rf build || true
-rm -rf output || true
+    conan create . appcom-djinni-common/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=Macos \
+        -s os.version=${MACOS_SDK_VERSION} -s arch=${arch} -s build_type=${build_type} -o shared=False
+}
 
-# generate djinni code
-./run-djinni.sh
+#=======================================================================================================================
+# create packages for all architectures and build types
 
-mkdir build
-cd build
+createConanPackage x86_64 Release
+createConanPackage x86_64 Debug
 
-# ======================================================================================================================
-# build ios
+# arch x86 is deprecated on macos, so we won't build for x86
 
-# configure
-cmake -DCMAKE_BUILD_TYPE=RELEASE ../macos
-
-# compile
-make install
-
-# fix fat file
-xcrun ranlib ../output/lib/*.a
-
-# cleanup
-cd ..
-rm -rf build
-
-# ======================================================================================================================
-# zip final result
-
-if [ "${ZIP_RESULTS}" = "TRUE" ]; then
-
-    cd output
-
-    zip -r ${OUTPUT_FILE} include lib *.yml
-
-    # cleanup
-    rm -r include lib *.yml
-fi
-
-# ======================================================================================================================
-# upload to nexus
-
-if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ] && [ "${ZIP_RESULTS}" = "TRUE" ]; then
-
-    # check if maven is installed
-    command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven 2 is required but it's not installed. Aborting."; exit 1; }
-
-    mvn deploy:deploy-file -e \
-    -DgroupId=appcom.djinni.common.macos \
-    -DartifactId="${MACOS_COMPILER}" \
-    -Dversion=${VERSION} \
-    -DgeneratePom=true \
-    -DrepositoryId=appcom-nexus \
-    -Durl=http://appcom-nexus/nexus/content/repositories/appcom-native-libraries \
-    -Dfile=${OUTPUT_FILE}
-fi

@@ -1,44 +1,46 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ----------------------------------------------------------------------------------------------------------------------
+# The MIT License (MIT)
+#
+# Copyright (c) 2019 Ralph-Gordon Paul. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+# documentation files (the "Software"), to deal in the Software without restriction, including without limitation the 
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit 
+# persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the 
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE 
+# WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
+# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# ----------------------------------------------------------------------------------------------------------------------
+
 set -e
 
+#=======================================================================================================================
+# settings
+
+declare LIBRARY_VERSION=1.0.4
+
+declare CONAN_USER=appcom
+declare CONAN_CHANNEL=stable
+
 declare TOOLCHAIN_VERSION=clang
+# please check the compiler version of your ndk before building f.e.:
+# /opt/android-ndks/android-ndk-r20/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --version
+declare COMPILER_VERSION=8.0
+declare COMPILER_LIBCXX=libc++
 declare STL_TYPE=c++_static
-declare NDK_VERSION=""
-declare NDK_MIN_API=19
-
-declare COMMIT=$(git rev-list --tags --max-count=1)
-declare VERSION=$(git describe --tags ${COMMIT})
-declare BRANCH=$(git rev-parse --abbrev-ref HEAD)
-declare OUTPUT_FILE=appcom-djinni-common-android-${VERSION}.zip
-
-# set to TRUE to zip archive
-declare ZIP_RESULTS=TRUE
-
-# set to TRUE to deploy to Nexus (requires ZIP_RESULTS=TRUE)
-declare DEPLOY_TO_NEXUS=FALSE
-
-# ======================================================================================================================
-
-cd $( dirname "${BASH_SOURCE[0]}" )
-
-# check that the android ndk path is set
-if [ -z "${ANDROID_NDK}" ]; then 
-    echo >&2 "ANDROID_NDK is not set - please set ANDROID_NDK to the path of your android ndk installation."; exit 1;
-fi
-
-# cleanup possible previous build
-rm -r build || true
-rm -r output/* || true
-
-# generate djinni code
-./run-djinni.sh
 
 #=======================================================================================================================
 
 function getAndroidNdkVersion()
 {
     # get properties file that contains the ndk revision number
-    local NDK_RELEASE_FILE=$ANDROID_NDK"/source.properties"
+    local NDK_RELEASE_FILE=$ANDROID_NDK_PATH"/source.properties"
     if [ -f "${NDK_RELEASE_FILE}" ]; then
         local NDK_RN=`cat $NDK_RELEASE_FILE | grep 'Pkg.Revision' | sed -E 's/^.*[=] *([0-9]+[.][0-9]+)[.].*/\1/g'`
     else
@@ -74,72 +76,65 @@ function getAndroidNdkVersion()
     esac
 }
 
-# ======================================================================================================================
+#=======================================================================================================================
 
-function build_android {
-
-    mkdir build
-
-    cd build
-
-    # configure build
-    cmake ../android \
-        -DCMAKE_BUILD_TYPE=RELEASE \
-        -DCMAKE_SYSTEM_NAME=Android \
-        -DCMAKE_SYSTEM_VERSION=${1} \
-        -DCMAKE_ANDROID_NDK=${ANDROID_NDK} \
-        -DCMAKE_ANDROID_ARCH_ABI=${2} \
-        -DCMAKE_ANDROID_STL_TYPE=${STL_TYPE} \
-        -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=${TOOLCHAIN_VERSION}
-
-    # compile
-    make install
-
-    cd ..
-    rm -r build
+function getCompilerVersion()
+{
+    case "${NDK_VERSION}" in
+        "r16b")
+            COMPILER_VERSION=5.0
+            ;;
+        "r17c")
+            COMPILER_VERSION=6.0
+            ;;
+        "r18b")
+            COMPILER_VERSION=7.0
+            ;;
+        "r19c")
+            COMPILER_VERSION=8.0
+            ;;
+        "r20")
+            COMPILER_VERSION=8.0
+            ;;
+            
+        *)
+            echo "Unknown Compiler version for Android NDK ${NDK_VERSION}"
+            exit 1
+    esac
 }
 
-# ======================================================================================================================
+#=======================================================================================================================
+# create conan package
+
+function createConanPackage()
+{
+    local arch=$1
+    local api_level=$2
+    local build_type=$3
+
+    # CONAN_USERNAME=${CONAN_USER} CONAN_CHANNEL=${CONAN_CHANNEL} \
+    # conan install . -s os=Android \
+    #     -s os.api_level=${api_level} -s compiler=${TOOLCHAIN_VERSION} -s compiler.version=${COMPILER_VERSION} \
+    #     -s compiler.libcxx=${COMPILER_LIBCXX} -s build_type=${build_type} -o android_ndk=${NDK_VERSION} \
+    #     -o android_stl_type=${STL_TYPE} -s arch=${arch} -o shared=False
+
+    conan create . appcom-djinni-common/${LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=Android \
+        -s os.api_level=${api_level} -s compiler=${TOOLCHAIN_VERSION} -s compiler.version=${COMPILER_VERSION} \
+        -s compiler.libcxx=${COMPILER_LIBCXX} -s build_type=${build_type} -o android_ndk=${NDK_VERSION} \
+        -o android_stl_type=${STL_TYPE} -s arch=${arch} -o shared=False
+}
+
+#=======================================================================================================================
+# create packages for all architectures and build types
 
 getAndroidNdkVersion
+getCompilerVersion
 
-declare ARTIFACT_ID="${NDK_VERSION}-${NDK_MIN_API}-${TOOLCHAIN_VERSION}"
-declare TOOLCHAIN_FILE="${ANDROID_NDK}/build/cmake/android.toolchain.cmake"
-
-build_android 21 arm64-v8a
-build_android 19 armeabi-v7a
-build_android 19 x86
-build_android 21 x86_64
-
-# ======================================================================================================================
-#
-# zip final result
-
-if [ "${ZIP_RESULTS}" = "TRUE" ]; then
-
-    cd output
-
-    zip -r ${OUTPUT_FILE} include lib jni *.yml
-
-    # cleanup
-    rm -r include lib jni *.yml
-fi
-
-# ======================================================================================================================
-#
-# upload to nexus
-
-if [ "${DEPLOY_TO_NEXUS}" = "TRUE" ] && [ "${ZIP_RESULTS}" = "TRUE" ] && [ "${BRANCH}" = "master" ]; then
-
-    # check if maven is installed
-    command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven 2 is required but it's not installed. Aborting."; exit 1; }
-
-    mvn deploy:deploy-file -e \
-    -DgroupId=appcom.djinni.common.android \
-    -DartifactId=${ARTIFACT_ID} \
-    -Dversion=${VERSION} \
-    -DgeneratePom=true \
-    -DrepositoryId=appcom-nexus \
-    -Durl=http://appcom-nexus/nexus/content/repositories/appcom-native-libraries \
-    -Dfile=${OUTPUT_FILE}
-fi
+createConanPackage armv7 19 Release
+#createConanPackage armv7 19 Debug
+#createConanPackage armv8 21 Release
+#createConanPackage armv8 21 Debug
+#createConanPackage x86 19 Release
+#createConanPackage x86 19 Debug
+#createConanPackage x86_64 21 Release
+#createConanPackage x86_64 21 Debug
