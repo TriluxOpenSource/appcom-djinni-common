@@ -35,18 +35,23 @@ before_install:
 ### install deps
 install:
 
-    # Install conan (linux)
+  # Install conan (linux)
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       pip install conan --user;
+    fi
+
+  # Install Java8 (needed by djinni) (macos)
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      brew tap caskroom/cask;
+      brew tap caskroom/versions;
+      brew cask install java8;
+      java -version;
+      javac -version;
     fi
 
   # Install conan (macos)
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       pip3 install conan;
-      brew tap adoptopenjdk/openjdk;
-      brew cask install adoptopenjdk8;
-      java -version;
-      javac -version;
     fi
 
   # Add conan repository and apply conan config
