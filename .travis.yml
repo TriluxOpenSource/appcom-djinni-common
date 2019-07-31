@@ -47,6 +47,7 @@ install:
 
   # Add conan repository and apply conan config
   - conan remote add ${CONAN_REPOSITORY_NAME} ${CONAN_REPOSITORY}
+  - conan remote add appcom-oss https://api.bintray.com/conan/appcom-interactive/appcom-oss
   - conan config install ${TRAVIS_BUILD_DIR}/.travis/conan/config.zip
 
   # login to conan
