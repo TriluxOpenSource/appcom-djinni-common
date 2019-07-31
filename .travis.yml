@@ -43,6 +43,10 @@ install:
   # Install conan (macos)
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       pip3 install conan;
+      brew tap adoptopenjdk/openjdk;
+      brew cask install adoptopenjdk8;
+      java -version;
+      javac -version;
     fi
 
   # Add conan repository and apply conan config
@@ -93,23 +97,23 @@ matrix:
         - TARGET_ARCH=armv8
         - TARGET_BUILD_TYPE=Release
 
-    # iOS - Debug
-    - os: osx
-      osx_image: xcode10.2
-      compiler: clang
-      env:
-        - TARGET_PLATFORM=ios
-        - TARGET_ARCH=armv8
-        - TARGET_BUILD_TYPE=Debug
+    # # iOS - Debug
+    # - os: osx
+    #   osx_image: xcode10.2
+    #   compiler: clang
+    #   env:
+    #     - TARGET_PLATFORM=ios
+    #     - TARGET_ARCH=armv8
+    #     - TARGET_BUILD_TYPE=Debug
 
-    # iOS - Simulator
-    - os: osx
-      osx_image: xcode10.2
-      compiler: clang
-      env:
-        - TARGET_PLATFORM=ios
-        - TARGET_ARCH=x86_64
-        - TARGET_BUILD_TYPE=Debug
+    # # iOS - Simulator
+    # - os: osx
+    #   osx_image: xcode10.2
+    #   compiler: clang
+    #   env:
+    #     - TARGET_PLATFORM=ios
+    #     - TARGET_ARCH=x86_64
+    #     - TARGET_BUILD_TYPE=Debug
 
     # ### Android NDK r20 - arm64-v8a ###
     # - os: linux
