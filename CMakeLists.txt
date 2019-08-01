@@ -88,10 +88,14 @@ if(DJINNI_WITH_JNI)
                             "${CMAKE_CURRENT_LIST_DIR}/generated-src/cpp"
                             # implementation
                             "${CMAKE_CURRENT_LIST_DIR}/src")
+
   # Do not use the host's jni.h on Android as it is provided automatically by the NDK
   if(NOT ANDROID)
     find_package(JNI REQUIRED QUIET)
     target_include_directories(appcom-djinni-common PUBLIC "${JNI_INCLUDE_DIRS}")
+  else()
+    # for android we have to link some android libraries
+    target_link_libraries(appcom-djinni-common android log)
   endif()
 endif()
 

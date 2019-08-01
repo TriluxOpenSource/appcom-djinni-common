@@ -13,7 +13,7 @@ class DjinniCommonConan(ConanFile):
     url = "https://github.com/appcom-interactive/appcom-djinni-common"
     license = "None" # this is a private library
     exports_sources = "cmake-modules/*", "src/*", "CMakeLists.txt", "bin/*", "djinni/*", "run-djinni.sh"
-    generators = "cmake_paths", "cmake"
+    generators = "cmake"
 
     # compile using cmake
     def build(self):
@@ -105,11 +105,11 @@ class DjinniCommonConan(ConanFile):
 
     def configure(self):
         if self.settings.os == "Android":
-            self.options["boost"].shared = self.options.shared
+            self.options["boost"].shared = False
             self.options["boost"].android_ndk = self.options.android_ndk
             self.options["boost"].android_stl_type = self.options.android_stl_type
 
-            self.options["djinni"].shared = self.options.shared
+            self.options["djinni"].shared = False
             self.options["djinni"].android_ndk = self.options.android_ndk
             self.options["djinni"].android_stl_type = self.options.android_stl_type
 
