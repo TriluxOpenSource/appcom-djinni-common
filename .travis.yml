@@ -13,15 +13,25 @@ git:
 
 env:
   global:
+    ### bintray environmentals ###
     - BINTRAY_USER=appcom-ci
     # BINTRAY_KEY
     - secure: "bMdIwwT+QyhTQ1b8XQwZeFBShr83ZwQDew3RxEehezKC4o1jTYhap8SBrJGrAthq9zwwOeXaGFFXveF0WtlHHufOnvfWNXcfLy1WFdRXlOGhmdeAmh+p4J0AtvWFaWUchXNi6yNzJhY0KVUAzx7xwMnCE0tCviZfc8f7qtExHIoeja4FaKw5LULqoHBZg4EaJInU/XC9rCWAqAr9sFjJhVJ0fvAr+ZvAf+8+qdXvUGYrK2z7vNlfj4wKwsKcRIpGMF2pIWuH0Ta7el5LeNscU50hpdFXOoLQnl4kqqT2h60jAkWMhzMrhht371D3ZdvrN609yShcIY3s1af4wfcQLQfFGSUk+ZUjtJ2g73jO7E38VR3IOc7CV9HUkWdIsGrLUcyi9+CRYHdYmuXtVk2P77JcL7/E630T0ZXahsKD1QrnYVEYT8olByBqTPocNyOiT9bmnmWJN7m8VvUEM6ELhbMVoqgeJ65TNBCoOyLJUX0U1edJe7nfrK0Bbjcas+aDmmb3MLv2UzBukvXP6+iMIrNmI1B/eGqTCYOdLxuq2Nkd2Gol0Ye9cLGq9VNHe+5nat7XtSxeLwhv4heXW/GZsufsowDPEkzPs806C9ml/A9XsSfjNtHH6J34SSpdRQcoHHR5PxQFpSihgOfNF2KG2Fd6k+z2iGaaNuY/d1C8HVg="
+    ### conan environmentals ###
     - CONAN_REPOSITORY=https://api.bintray.com/conan/appcom-interactive/appcom
     - CONAN_REPOSITORY_NAME=appcom
     - CONAN_USER=appcom
     - CONAN_CHANNEL=stable
     - CONAN_LIBRARY_VERSION=1.0.4
     - CONAN_PACKAGE_NAME=appcom-djinni-common
+    ### maven environmentals ###
+    - TRAVIS_MAVEN_FILE=bin/djinni.jar
+    - TRAVIS_MAVEN_SERVER_ID=appcom-maven-oss
+    - TRAVIS_MAVEN_USER=${BINTRAY_USER}
+    - TRAVIS_MAVEN_PWD=${BINTRAY_KEY}
+    - TRAVIS_MAVEN_GROUP_ID="eu.appcom"
+    - TRAVIS_MAVEN_ARTIFACT=eu.appcom:djinni:470
+    - TRAVIS_MAVEN_URL="https://api.bintray.com/maven/appcom-interactive/appcom-maven-oss/djinni"
 
 ### before installing deps
 before_install:
@@ -40,15 +50,6 @@ install:
       pip install conan --user;
     fi
 
-  # Install Java8 (needed by djinni) (macos)
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      brew tap caskroom/cask;
-      brew tap caskroom/versions;
-      brew cask install java8;
-      java -version;
-      javac -version;
-    fi
-
   # Install conan (macos)
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       pip3 install conan;
@@ -61,6 +62,14 @@ install:
 
   # login to conan
   - conan user -p "$BINTRAY_KEY" -r ${CONAN_REPOSITORY_NAME} ${BINTRAY_USER}
+
+  # install maven via sdkman.io
+  - curl -s "https://get.sdkman.io" | bash
+  - source "${HOME}/.sdkman/bin/sdkman-init.sh"
+  - sdk install maven
+
+  # download djinni.jar
+  - .travis/provider/maven-download-file.sh
 
 ### build script
 script:
@@ -84,7 +93,7 @@ script:
 
 deploy:
   provider: script
-  script: bash .travis/conan-deploy.sh
+  script: bash .travis/provider/conan-deploy.sh
   on:
     tags: true
     all_branches: true

@@ -12,7 +12,7 @@ class DjinniCommonConan(ConanFile):
     description = "This library contains functions that are commonly used in appcom djinni projects."
     url = "https://github.com/appcom-interactive/appcom-djinni-common"
     license = "None" # this is a private library
-    exports_sources = "cmake-modules/*", "src/*", "CMakeLists.txt", "deps/*", "djinni/*", "run-djinni.sh"
+    exports_sources = "cmake-modules/*", "src/*", "CMakeLists.txt", "bin/*", "djinni/*", "run-djinni.sh"
     generators = "cmake_paths", "cmake"
 
     # compile using cmake

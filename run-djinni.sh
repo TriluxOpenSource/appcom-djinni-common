@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-declare base_dir=$(cd "`dirname "0"`" && pwd)
+declare base_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 declare cpp_out="$base_dir/generated-src/cpp"
 declare jni_out="$base_dir/generated-src/jni"
 declare objc_out="$base_dir/generated-src/objc"
@@ -15,7 +15,7 @@ declare yaml_out_file="appcom-common.yml"
 
 rm -r $base_dir/generated-src/*
 
-deps/djinni/src/run \
+java -jar bin/djinni.jar \
    --java-out $java_out \
    --java-package $java_package \
    --ident-java-field mFooBar \
