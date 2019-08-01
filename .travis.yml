@@ -1,0 +1,199 @@
+
+# C++ project
+language: cpp
+
+# Only build master and tags
+if: branch IN (master, travis) OR tag IS present
+
+git:
+    submodules: true
+
+env:
+  global:
+    ### bintray environmentals ###
+    - BINTRAY_USER=appcom-ci
+    # BINTRAY_KEY
+    - secure: "bMdIwwT+QyhTQ1b8XQwZeFBShr83ZwQDew3RxEehezKC4o1jTYhap8SBrJGrAthq9zwwOeXaGFFXveF0WtlHHufOnvfWNXcfLy1WFdRXlOGhmdeAmh+p4J0AtvWFaWUchXNi6yNzJhY0KVUAzx7xwMnCE0tCviZfc8f7qtExHIoeja4FaKw5LULqoHBZg4EaJInU/XC9rCWAqAr9sFjJhVJ0fvAr+ZvAf+8+qdXvUGYrK2z7vNlfj4wKwsKcRIpGMF2pIWuH0Ta7el5LeNscU50hpdFXOoLQnl4kqqT2h60jAkWMhzMrhht371D3ZdvrN609yShcIY3s1af4wfcQLQfFGSUk+ZUjtJ2g73jO7E38VR3IOc7CV9HUkWdIsGrLUcyi9+CRYHdYmuXtVk2P77JcL7/E630T0ZXahsKD1QrnYVEYT8olByBqTPocNyOiT9bmnmWJN7m8VvUEM6ELhbMVoqgeJ65TNBCoOyLJUX0U1edJe7nfrK0Bbjcas+aDmmb3MLv2UzBukvXP6+iMIrNmI1B/eGqTCYOdLxuq2Nkd2Gol0Ye9cLGq9VNHe+5nat7XtSxeLwhv4heXW/GZsufsowDPEkzPs806C9ml/A9XsSfjNtHH6J34SSpdRQcoHHR5PxQFpSihgOfNF2KG2Fd6k+z2iGaaNuY/d1C8HVg="
+    ### conan environmentals ###
+    - CONAN_REPOSITORY=https://api.bintray.com/conan/appcom-interactive/appcom
+    - CONAN_REPOSITORY_NAME=appcom
+    - CONAN_USER=appcom
+    - CONAN_CHANNEL=stable
+    - CONAN_LIBRARY_VERSION=1.0.4
+    - CONAN_PACKAGE_NAME=appcom-djinni-common
+    ### maven environmentals ###
+    - TRAVIS_MAVEN_FILE=bin/djinni.jar
+    - TRAVIS_MAVEN_SERVER_ID=appcom-maven-oss
+    - TRAVIS_MAVEN_USER=${BINTRAY_USER}
+    - TRAVIS_MAVEN_PWD=${BINTRAY_KEY}
+    - TRAVIS_MAVEN_GROUP_ID="eu.appcom"
+    - TRAVIS_MAVEN_ARTIFACT=eu.appcom:djinni:470
+    - TRAVIS_MAVEN_URL="https://api.bintray.com/maven/appcom-interactive/appcom-maven-oss/djinni"
+
+### before installing deps
+before_install:
+  # Download Android NDK from Google
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TARGET_PLATFORM" == "android" ]]; then
+      curl -sSOL "https://dl.google.com/android/repository/android-ndk-${TRAVIS_ANDROID_NDK_VERSION}-linux-x86_64.zip";
+      unzip -q -o android-ndk-${TRAVIS_ANDROID_NDK_VERSION}-linux-x86_64.zip;
+      export ANDROID_NDK_PATH=${TRAVIS_BUILD_DIR}/android-ndk-${TRAVIS_ANDROID_NDK_VERSION};
+    fi
+
+### install deps
+install:
+
+  # Install conan (linux)
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      pip install conan --user;
+    fi
+
+  # Install conan (macos)
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      pip3 install conan;
+    fi
+
+  # Add conan repository and apply conan config
+  - conan remote add ${CONAN_REPOSITORY_NAME} ${CONAN_REPOSITORY}
+  - conan remote add appcom-oss https://api.bintray.com/conan/appcom-interactive/appcom-oss
+  - conan config install ${TRAVIS_BUILD_DIR}/.travis/conan/config.zip
+
+  # login to conan
+  - conan user -p "$BINTRAY_KEY" -r ${CONAN_REPOSITORY_NAME} ${BINTRAY_USER}
+
+  # install maven via sdkman.io
+  - curl -s "https://get.sdkman.io" | bash
+  - source "${HOME}/.sdkman/bin/sdkman-init.sh"
+  - sdk install maven
+
+  # download djinni.jar
+  - .travis/provider/maven-download-file.sh
+
+### build script
+script:
+  # show OS/compiler version
+  - uname -a
+
+  # make sure CXX is correctly set
+  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+
+  # Android Builds (shared and static)
+  - if [ "$TARGET_PLATFORM" == "android" ]; then
+      conan create . ${CONAN_PACKAGE_NAME}/${CONAN_LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=Android -s os.api_level=${TRAVIS_ANDROID_API_LEVEL} -s compiler=${TRAVIS_ANDROID_COMPILER} -s compiler.version=${TRAVIS_ANDROID_COMPILER_VERSION} -s compiler.libcxx=${TRAVIS_ANDROID_COMPILER_LIBCXX} -s build_type=${TARGET_BUILD_TYPE} -o android_ndk=${TRAVIS_ANDROID_NDK_VERSION} -o android_stl_type=${TRAVIS_ANDROID_STL_TYPE} -s arch=${TRAVIS_ANDROID_ARCH} -o shared=True;
+      conan create . ${CONAN_PACKAGE_NAME}/${CONAN_LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=Android -s os.api_level=${TRAVIS_ANDROID_API_LEVEL} -s compiler=${TRAVIS_ANDROID_COMPILER} -s compiler.version=${TRAVIS_ANDROID_COMPILER_VERSION} -s compiler.libcxx=${TRAVIS_ANDROID_COMPILER_LIBCXX} -s build_type=${TARGET_BUILD_TYPE} -o android_ndk=${TRAVIS_ANDROID_NDK_VERSION} -o android_stl_type=${TRAVIS_ANDROID_STL_TYPE} -s arch=${TRAVIS_ANDROID_ARCH} -o shared=False;
+    fi
+
+  # iOS Builds
+  - if [ "$TARGET_PLATFORM" == "ios" ]; then
+      export IOS_SDK_VERSION=$(xcodebuild -showsdks | grep iphoneos | awk '{print $4}' | sed 's/[^0-9,\.]*//g');
+      echo "iOS SDK ${IOS_SDK_VERSION}";
+      conan create . ${CONAN_PACKAGE_NAME}/${CONAN_LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL} -s os=iOS -s os.version=${IOS_SDK_VERSION} -s arch=${TARGET_ARCH} -s build_type=${TARGET_BUILD_TYPE} -o shared=False;
+    fi
+
+  # show the resulting package
+  - conan search ${CONAN_PACKAGE_NAME}/${CONAN_LIBRARY_VERSION}@${CONAN_USER}/${CONAN_CHANNEL}
+
+deploy:
+  provider: script
+  script: bash .travis/provider/conan-deploy.sh
+  on:
+    tags: true
+    all_branches: true
+
+### build matrix
+matrix:
+  include:
+      
+    # iOS - Release
+    - os: osx
+      osx_image: xcode10.2
+      compiler: clang
+      env:
+        - TARGET_PLATFORM=ios
+        - TARGET_ARCH=armv8
+        - TARGET_BUILD_TYPE=Release
+
+    # iOS - Debug
+    - os: osx
+      osx_image: xcode10.2
+      compiler: clang
+      env:
+        - TARGET_PLATFORM=ios
+        - TARGET_ARCH=armv8
+        - TARGET_BUILD_TYPE=Debug
+
+    # iOS - Simulator
+    - os: osx
+      osx_image: xcode10.2
+      compiler: clang
+      env:
+        - TARGET_PLATFORM=ios
+        - TARGET_ARCH=x86_64
+        - TARGET_BUILD_TYPE=Debug
+
+    ### Android NDK r20 - arm64-v8a ###
+    - os: linux
+      dist: xenial
+      env:
+        - TARGET_PLATFORM=android
+        - TRAVIS_ANDROID_NDK_VERSION=r20
+        - TRAVIS_ANDROID_COMPILER=clang
+        - TRAVIS_ANDROID_COMPILER_VERSION=8.0
+        - TRAVIS_ANDROID_ARCH=armv8
+        - TRAVIS_ANDROID_API_LEVEL=21
+        - TRAVIS_ANDROID_COMPILER_LIBCXX=libc++
+        - TRAVIS_ANDROID_STL_TYPE=c++_static
+        - TARGET_BUILD_TYPE=Release
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: ['g++-5' ]
+
+    ### Android NDK r20 - armeabi-v7a ###
+    - os: linux
+      dist: xenial
+      env:
+        - TARGET_PLATFORM=android
+        - TRAVIS_ANDROID_NDK_VERSION=r20
+        - TRAVIS_ANDROID_COMPILER=clang
+        - TRAVIS_ANDROID_COMPILER_VERSION=8.0
+        - TRAVIS_ANDROID_ARCH=armv7
+        - TRAVIS_ANDROID_API_LEVEL=19
+        - TRAVIS_ANDROID_COMPILER_LIBCXX=libc++
+        - TRAVIS_ANDROID_STL_TYPE=c++_static
+        - TARGET_BUILD_TYPE=Release
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: ['g++-5' ]
+
+    ### Android NDK r20 - x86 ###
+    - os: linux
+      dist: xenial
+      env:
+        - TARGET_PLATFORM=android
+        - TRAVIS_ANDROID_NDK_VERSION=r20
+        - TRAVIS_ANDROID_COMPILER=clang
+        - TRAVIS_ANDROID_COMPILER_VERSION=8.0
+        - TRAVIS_ANDROID_ARCH=x86
+        - TRAVIS_ANDROID_API_LEVEL=19
+        - TRAVIS_ANDROID_COMPILER_LIBCXX=libc++
+        - TRAVIS_ANDROID_STL_TYPE=c++_static
+        - TARGET_BUILD_TYPE=Release
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: ['g++-5' ]
+
+    ### Android NDK r20 - x86_64 ###
+    - os: linux
+      dist: xenial
+      env:
+        - TARGET_PLATFORM=android
+        - TRAVIS_ANDROID_NDK_VERSION=r20
+        - TRAVIS_ANDROID_COMPILER=clang
+        - TRAVIS_ANDROID_COMPILER_VERSION=8.0
+        - TRAVIS_ANDROID_ARCH=x86_64
+        - TRAVIS_ANDROID_API_LEVEL=21
+        - TRAVIS_ANDROID_COMPILER_LIBCXX=libc++
+        - TRAVIS_ANDROID_STL_TYPE=c++_static
+        - TARGET_BUILD_TYPE=Release
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: ['g++-5' ]

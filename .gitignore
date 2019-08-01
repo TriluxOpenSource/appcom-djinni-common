@@ -1,8 +1,10 @@
 
 ### Custom ###
 
+bin/
 build/
 generated-src/
+appcom-common.yml
 
 android/include/
 android/lib/
