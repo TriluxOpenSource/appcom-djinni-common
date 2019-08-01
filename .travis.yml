@@ -2,8 +2,8 @@
 # C++ project
 language: cpp
 
-# Only build master and tags
-if: branch IN (master, travis) OR tag IS present
+# Only build master, develop and tags
+if: branch IN (master, develop) OR tag IS present
 
 git:
     submodules: true
