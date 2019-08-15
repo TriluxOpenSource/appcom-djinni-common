@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.6)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (NOT (DJINNI_WITH_OBJC OR DJINNI_WITH_JNI))
   message(FATAL_ERROR "At least one of DJINNI_WITH_OBJC or DJINNI_WITH_JNI must be enabled.")

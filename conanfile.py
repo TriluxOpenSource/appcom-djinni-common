@@ -39,10 +39,6 @@ class DjinniCommonConan(ConanFile):
         cmake.build()
         cmake.install()
 
-        # execute ranlib for all static universal libraries (required for fat libraries on iOS)
-        if self.settings.os == "iOS" and not self.options.shared:
-            self.runRanlibForiOS(os.path.join(self.package_folder, "lib"))
-
     def applyCmakeSettingsForAndroid(self, cmake):
         android_toolchain = os.environ["ANDROID_NDK_PATH"] + "/build/cmake/android.toolchain.cmake"
         cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = android_toolchain
@@ -83,13 +79,6 @@ class DjinniCommonConan(ConanFile):
     def applyCmakeSettingsFormacOS(self, cmake):
         cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
         cmake.definitions["DJINNI_WITH_OBJC"] = "ON"
-
-    def runRanlibForiOS(self, lib_dir):
-        if self.settings.arch != "x86" and self.settings.arch != "x86_64":
-            for f in os.listdir(lib_dir):
-                if f.endswith(".a") and os.path.isfile(os.path.join(lib_dir,f)) and not os.path.islink(os.path.join(lib_dir,f)):
-                    print("xcrun ranlib %s" % os.path.join(lib_dir,f))
-                    self.run("xcrun ranlib %s" % os.path.join(lib_dir,f))
 
     def package(self):
         self.copy("*.h", dst="include", src='include')
