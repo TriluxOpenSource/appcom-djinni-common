@@ -33,7 +33,7 @@ class DjinniCommonConan(ConanFile):
             self.applyCmakeSettingsFormacOS(cmake)
 
         # build static library if shared option is disabled
-        cmake.definitions["BUILD_STATIC_LIB"] = "ON" if self.options.shared == False else "OFF"
+        cmake.definitions["BUILD_STATIC_LIB"] = "OFF" if self.options.shared else "ON"
 
         cmake.configure(source_folder=library_folder)
         cmake.build()
@@ -79,15 +79,6 @@ class DjinniCommonConan(ConanFile):
     def applyCmakeSettingsFormacOS(self, cmake):
         cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
         cmake.definitions["DJINNI_WITH_OBJC"] = "ON"
-
-    def package(self):
-        self.copy("*.h", dst="include", src='include')
-        self.copy("*.hpp", dst="include", src='include')
-        self.copy("*.lib", dst="lib", src='lib', keep_path=False)
-        self.copy("*.dll", dst="bin", src='bin', keep_path=False)
-        self.copy("*.so", dst="lib", src='lib', keep_path=False)
-        self.copy("*.dylib", dst="lib", src='lib', keep_path=False)
-        self.copy("*.a", dst="lib", src='lib', keep_path=False)
         
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
@@ -108,7 +99,7 @@ class DjinniCommonConan(ConanFile):
             self.options["boost"].android_ndk = self.options.android_ndk
             self.options["boost"].android_stl_type = self.options.android_stl_type
 
-            self.options["djinni"].shared = False
+            self.options["djinni"].shared = self.options.shared
             self.options["djinni"].android_ndk = self.options.android_ndk
             self.options["djinni"].android_stl_type = self.options.android_stl_type
 
