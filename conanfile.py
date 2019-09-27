@@ -53,11 +53,12 @@ class DjinniCommonConan(ConanFile):
         variants = []
         ios_toolchain = "cmake-modules/Toolchains/ios.toolchain.cmake"
         cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = ios_toolchain
+        cmake.definitions["DEPLOYMENT_TARGET"] = "10.0"
         cmake.definitions["DJINNI_WITH_OBJC"] = "ON"
         
         # define all architectures for ios fat library
         if "arm" in self.settings.arch:
-            variants = ["armv7", "armv7s", "armv8"]
+            variants = ["armv7", "armv7s", "armv8", "armv8.3"]
 
         # apply build config for all defined architectures
         if len(variants) > 0:
@@ -67,7 +68,7 @@ class DjinniCommonConan(ConanFile):
                     archs = tools.to_apple_arch(variants[i])
                 else:
                     archs += ";" + tools.to_apple_arch(variants[i])
-            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = archs
+            cmake.definitions["ARCHS"] = archs
 
         if self.settings.arch == "x86":
             cmake.definitions["IOS_PLATFORM"] = "SIMULATOR"
