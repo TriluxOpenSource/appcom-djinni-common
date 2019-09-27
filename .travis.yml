@@ -105,7 +105,7 @@ matrix:
       
     # iOS - Release
     - os: osx
-      osx_image: xcode10.3
+      osx_image: xcode11
       compiler: clang
       env:
         - TARGET_PLATFORM=ios
@@ -114,7 +114,7 @@ matrix:
 
     # iOS - Debug
     - os: osx
-      osx_image: xcode10.3
+      osx_image: xcode11
       compiler: clang
       env:
         - TARGET_PLATFORM=ios
@@ -123,7 +123,7 @@ matrix:
 
     # iOS - Simulator
     - os: osx
-      osx_image: xcode10.3
+      osx_image: xcode11
       compiler: clang
       env:
         - TARGET_PLATFORM=ios
