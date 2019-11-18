@@ -11,7 +11,7 @@ class DjinniCommonConan(ConanFile):
     default_options = "shared=False", "android_ndk=None", "android_stl_type=c++_static"
     description = "This library contains functions that are commonly used in appcom djinni projects."
     url = "https://github.com/appcom-interactive/appcom-djinni-common"
-    license = "None" # this is a private library
+    license = "MIT"
     exports_sources = "cmake-modules/*", "src/*", "CMakeLists.txt", "bin/*", "djinni/*", "run-djinni.sh"
     generators = "cmake"
 
