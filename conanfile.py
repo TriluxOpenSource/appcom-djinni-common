@@ -12,7 +12,7 @@ class DjinniCommonConan(ConanFile):
     description = "This library contains functions that are commonly used in appcom djinni projects."
     url = "https://github.com/appcom-interactive/appcom-djinni-common"
     license = "MIT"
-    exports_sources = "cmake-modules/*", "src/*", "CMakeLists.txt", "bin/*", "djinni/*", "run-djinni.sh"
+    exports_sources = "src/*", "CMakeLists.txt", "bin/*", "djinni/*", "run-djinni.sh"
     generators = "cmake"
 
     # compile using cmake
@@ -50,32 +50,18 @@ class DjinniCommonConan(ConanFile):
         cmake.definitions["DJINNI_WITH_JNI"] = "ON"
 
     def applyCmakeSettingsForiOS(self, cmake):
-        variants = []
-        ios_toolchain = "cmake-modules/Toolchains/ios.toolchain.cmake"
-        cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = ios_toolchain
+        cmake.definitions["CMAKE_SYSTEM_NAME"] = "iOS"
         cmake.definitions["DEPLOYMENT_TARGET"] = "10.0"
+        cmake.definitions["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.0"
+        cmake.definitions["CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH"] = "NO"
+        cmake.definitions["CMAKE_IOS_INSTALL_COMBINED"] = "YES"
         cmake.definitions["DJINNI_WITH_OBJC"] = "ON"
         
         # define all architectures for ios fat library
         if "arm" in self.settings.arch:
-            variants = ["armv7", "armv7s", "armv8", "armv8.3"]
-
-        # apply build config for all defined architectures
-        if len(variants) > 0:
-            archs = ""
-            for i in range(0, len(variants)):
-                if i == 0:
-                    archs = tools.to_apple_arch(variants[i])
-                else:
-                    archs += ";" + tools.to_apple_arch(variants[i])
-            cmake.definitions["ARCHS"] = archs
-
-        if self.settings.arch == "x86":
-            cmake.definitions["IOS_PLATFORM"] = "SIMULATOR"
-        elif self.settings.arch == "x86_64":
-            cmake.definitions["IOS_PLATFORM"] = "SIMULATOR64"
+            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = "armv7;armv7s;arm64;arm64e"
         else:
-            cmake.definitions["IOS_PLATFORM"] = "OS"
+            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)
 
     def applyCmakeSettingsFormacOS(self, cmake):
         cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = tools.to_apple_arch(self.settings.arch)

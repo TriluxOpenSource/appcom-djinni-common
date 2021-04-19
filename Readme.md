@@ -1,7 +1,5 @@
 # appcom djinni common
 
-[![Build Status](https://travis-ci.com/appcom-interactive/appcom-djinni-common.svg?token=z6UUyxZrQ95esU6f5XqA&branch=master)](https://travis-ci.com/appcom-interactive/appcom-djinni-common)
-
 This library contains functions that are commonly used in appcom djinni projects.
 
 ## Dependencies
